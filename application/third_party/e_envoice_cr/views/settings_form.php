@@ -1,6 +1,6 @@
 <?php
-echo form_open('e-envoice-cr/config/save', array(
-  'id' => 'info_config_form',
+echo form_open("e_envoice_cr/save_settings", array(
+  'id' => 'e_envoice_cr_settings_form',
   'enctype' => 'multipart/form-data',
   'class' => 'form-horizontal'));
 ?>
@@ -14,9 +14,8 @@ echo form_open('e-envoice-cr/config/save', array(
         echo form_dropdown(array(
           'name' => 'environment',
           'id' => 'environment',
-          'class' => 'form-control input-sm required',
-          'value'=>$this->config->item('e_envoice_cr_env')
-            ),$environments)
+          'class' => 'form-control input-sm required',          
+            ),$environments,array($this->config->item('e_envoice_cr_env')))
         ?>
       </div>
     </div>
@@ -46,7 +45,7 @@ echo form_open('e-envoice-cr/config/save', array(
           'name' => 'password',
           'id' => 'password',
           'class' => 'form-control input-sm required',
-          'value' => $this->config->item('e_envoice_cr_password')));
+          'type' => 'password'));
         ?>
       </div>
     </div>
@@ -60,9 +59,8 @@ echo form_open('e-envoice-cr/config/save', array(
         echo form_dropdown(array(
           'name' => 'id_type',
           'id' => 'id_type',
-          'class' => 'form-control input-sm required',
-          'value'=>$this->config->item('e_envoice_cr_id_type'),
-            ),$id_types)
+          'class' => 'form-control input-sm required',         
+            ),$id_types, array($this->config->item('e_envoice_cr_id_type')))
         ?>
       </div>
     </div>
@@ -116,7 +114,7 @@ echo form_open('e-envoice-cr/config/save', array(
             'name' => 'cert_password',
             'id' => 'cert_password',
             'class' => 'form-control input-sm required',
-            'value' => $this->config->item('e_envoice_cr_cert_password')));
+            'type' => 'password'));
           ?>
       </div>
     </div>
