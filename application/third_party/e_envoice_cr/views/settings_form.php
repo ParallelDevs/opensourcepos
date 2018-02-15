@@ -9,7 +9,7 @@ echo form_open("e_envoice_cr/save_settings", array(
     <?php echo form_label($this->lang->line('e_envoice_cr_env'), 'environment', array('class' => 'control-label col-xs-2 required')); ?>
     <div class="col-xs-6">
       <div class="input-group">
-        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-home"></span></span>
+        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-cloud"></span></span>
         <?php
         echo form_dropdown(array(
           'name' => 'environment',
@@ -24,7 +24,7 @@ echo form_open("e_envoice_cr/save_settings", array(
     <?php echo form_label($this->lang->line('e_envoice_cr_username'), 'username', array('class' => 'control-label col-xs-2 required')); ?>
     <div class="col-xs-6">
       <div class="input-group">
-        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-home"></span></span>
+        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-user"></span></span>
         <?php
         echo form_input(array(
           'name' => 'username',
@@ -39,7 +39,7 @@ echo form_open("e_envoice_cr/save_settings", array(
     <?php echo form_label($this->lang->line('e_envoice_cr_password'), 'password', array('class' => 'control-label col-xs-2 required')); ?>
     <div class="col-xs-6">
       <div class="input-group">
-        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-home"></span></span>
+        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-lock"></span></span>
         <?php
         echo form_input(array(
           'name' => 'password',
@@ -54,7 +54,7 @@ echo form_open("e_envoice_cr/save_settings", array(
     <?php echo form_label($this->lang->line('e_envoice_cr_id_type'), 'id_type', array('class' => 'control-label col-xs-2 required')); ?>
     <div class="col-xs-6">
       <div class="input-group">
-        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-home"></span></span>
+        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-user"></span></span>
         <?php
         echo form_dropdown(array(
           'name' => 'id_type',
@@ -69,7 +69,7 @@ echo form_open("e_envoice_cr/save_settings", array(
     <?php echo form_label($this->lang->line('e_envoice_cr_id'), 'company_id', array('class' => 'control-label col-xs-2 required')); ?>
     <div class="col-xs-6">
       <div class="input-group">
-        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-home"></span></span>
+        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-user"></span></span>
         <?php
         echo form_input(array(
           'name' => 'company_id',
@@ -84,7 +84,7 @@ echo form_open("e_envoice_cr/save_settings", array(
     <?php echo form_label($this->lang->line('e_envoice_cr_name'), 'company_name', array('class' => 'control-label col-xs-2 required')); ?>
     <div class="col-xs-6">
       <div class="input-group">
-        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-home"></span></span>
+        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-user"></span></span>
         <?php
         echo form_input(array(
           'name' => 'company_name',
@@ -99,7 +99,7 @@ echo form_open("e_envoice_cr/save_settings", array(
     <?php echo form_label($this->lang->line('e_envoice_cr_cert'), 'cert', array('class' => 'control-label col-xs-2 required')); ?>
     <div class="col-xs-6">
       <div class="input-group">
-        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-home"></span></span>
+        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-certificate"></span></span>
           <input type="file" name="cert" size="1" />
       </div>
     </div>
@@ -108,7 +108,7 @@ echo form_open("e_envoice_cr/save_settings", array(
     <?php echo form_label($this->lang->line('e_envoice_cr_cert_password'), 'cert_password', array('class' => 'control-label col-xs-2 required')); ?>
     <div class="col-xs-6">
       <div class="input-group">
-        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-home"></span></span>
+        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-lock"></span></span>
           <?php
           echo form_input(array(
             'name' => 'cert_password',
