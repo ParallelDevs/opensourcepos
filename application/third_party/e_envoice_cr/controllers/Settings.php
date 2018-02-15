@@ -15,6 +15,7 @@ class Settings extends Secure_Controller {
   public function __construct() {
     parent::__construct('config');
     $this->load->add_package_path(APPPATH . 'third_party/e_envoice_cr/');
+    $this->load->language('e_envoice_cr');
   }
 
   protected function get_id_types() {
@@ -41,6 +42,13 @@ class Settings extends Secure_Controller {
       'e_envoice_cr_name' => $this->input->post('company_name'),
       'e_envoice_cr_cert_password' => $this->input->post('cert_password')
     ];
+    
+    if(empty($batch_save_data['e_envoice_cr_password'])){
+      unset($batch_save_data['e_envoice_cr_password']);
+    }
+    if(empty($batch_save_data['e_envoice_cr_cert_password'])){
+      unset($batch_save_data['e_envoice_cr_cert_password']);
+    }
 
     return $batch_save_data;
   }
