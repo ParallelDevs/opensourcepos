@@ -8,4 +8,5 @@ $lang["e_envoice_cr_id"] = "Company Id (Hacienda)";
 $lang["e_envoice_cr_name"] = "Company Name (Hacienda)";
 $lang["e_envoice_cr_cert"] = "Certificate File";
 $lang["e_envoice_cr_cert_password"] = "Certificate Password";
+$lang["e_envoice_cr_currency_code"] = "Currency code";
 

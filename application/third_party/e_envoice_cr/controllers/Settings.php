@@ -40,6 +40,7 @@ class Settings extends Secure_Controller {
       'e_envoice_cr_id_type' => $this->input->post('id_type'),
       'e_envoice_cr_id' => $this->input->post('company_id'),
       'e_envoice_cr_name' => $this->input->post('company_name'),
+      'e_envoice_cr_currency_code' => $this->input->post('currency_code'),
       'e_envoice_cr_cert_password' => $this->input->post('cert_password')
     ];
     
