@@ -8,7 +8,7 @@ require_once APPPATH . 'controllers/Secure_Controller.php';
 require_once dirname(__DIR__) . '/config/Hacienda_constants.php';
 
 /**
- * 
+ *
  */
 class Settings extends Secure_Controller {
 
@@ -55,8 +55,8 @@ class Settings extends Secure_Controller {
   }
 
   protected function handle_cert_upload() {
-    $this->load->helper('directory');    
-    
+    $this->load->helper('directory');
+
     if (!is_dir('uploads')) {
       mkdir('./uploads', 0777, true);
     }
@@ -67,7 +67,7 @@ class Settings extends Secure_Controller {
     // load upload library
     $config = array('upload_path' => './uploads/certs/',
       'allowed_types' => 'p12',
-      'file_name'=>'e_envoice_cert',      
+      'file_name'=>'e_envoice_cert',
     );
     $this->load->library('upload', $config);
     $this->upload->do_upload('cert');
