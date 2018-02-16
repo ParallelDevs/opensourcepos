@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 function get_invoice_dir(){
-  $invoice_dir = 'e_envoice_cr';
+  $invoice_dir = 'e_envoice_cr_invoices';
   return $invoice_dir;
 }
 

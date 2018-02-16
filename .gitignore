@@ -10,7 +10,7 @@ public/dist
 dist/
 docs/
 public/bower_components
-public/e_envoice_cr
+public/e_envoice_cr_invoices
 *.patch
 patches/
 .idea/
