@@ -115,7 +115,7 @@ echo form_open("e_envoice_cr/save_settings", array(
     <div class="col-xs-6">
       <div class="input-group">
         <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-certificate"></span></span>
-          <input type="file" name="cert" size="1" />
+        <input type="file" id="cert" name="cert" size="1" accept=".p12"/>
       </div>
     </div>
   </div>

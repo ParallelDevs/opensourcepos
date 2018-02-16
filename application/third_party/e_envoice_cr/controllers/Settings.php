@@ -43,15 +43,36 @@ class Settings extends Secure_Controller {
       'e_envoice_cr_currency_code' => $this->input->post('currency_code'),
       'e_envoice_cr_cert_password' => $this->input->post('cert_password')
     ];
-    
-    if(empty($batch_save_data['e_envoice_cr_password'])){
+
+    if (empty($batch_save_data['e_envoice_cr_password'])) {
       unset($batch_save_data['e_envoice_cr_password']);
     }
-    if(empty($batch_save_data['e_envoice_cr_cert_password'])){
+    if (empty($batch_save_data['e_envoice_cr_cert_password'])) {
       unset($batch_save_data['e_envoice_cr_cert_password']);
     }
 
     return $batch_save_data;
+  }
+
+  protected function handle_cert_upload() {
+    $this->load->helper('directory');    
+    
+    if (!is_dir('uploads')) {
+      mkdir('./uploads', 0777, true);
+    }
+    if (!is_dir('uploads/certs')) {
+      mkdir('./uploads/certs', 0777, true);
+    }
+
+    // load upload library
+    $config = array('upload_path' => './uploads/certs/',
+      'allowed_types' => 'p12',
+      'file_name'=>'e_envoice_cert',      
+    );
+    $this->load->library('upload', $config);
+    $this->upload->do_upload('cert');
+
+    return strlen($this->upload->display_errors()) == 0 || !strcmp($this->upload->display_errors(), '<p>' . $this->lang->line('upload_no_file_selected') . '</p>');
   }
 
 }
