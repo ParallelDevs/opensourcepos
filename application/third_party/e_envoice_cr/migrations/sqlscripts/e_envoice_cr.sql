@@ -14,6 +14,5 @@ INSERT INTO `ospos_app_config` (`key`, `value`) VALUES
 ('e_envoice_cr_id_type', ''),
 ('e_envoice_cr_id', ''),
 ('e_envoice_cr_name',''),
-('e_envoice_cr_cert_path', ''),
 ('e_envoice_cr_cert_password', ''),
 ('e_envoice_cr_currency_code','');
