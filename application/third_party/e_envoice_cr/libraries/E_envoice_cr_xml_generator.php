@@ -41,6 +41,7 @@ class E_envoice_cr_xml_generator {
   protected function initXML() {
     $this->_xml = new DOMDocument('1.0', 'UTF-8');
     $this->_xml->standalone = true;
+    $this->_xml->formatOutput = true;
   }
 
   protected function getRootTag($type) {
@@ -153,6 +154,68 @@ class E_envoice_cr_xml_generator {
     $tag->appendChild($numTag);
     return $tag;
   }
+  
+  protected function getDetalleServicioTag(&$items) {
+    $tag = $this->_xml->createElement('DetalleServicio');
+    foreach ($items as $item) {
+      $lineTag = $this->getLineaDetalleTag($item);
+      $tag->appendChild($lineTag);
+    }
+    return $tag;
+  }
+  
+  protected function getLineaDetalleTag(&$item) {
+    $tag= $this->_xml->createElement('LineaDetalle');
+    $lineNum = $this->getSimpleTag('NumeroLinea',$item['line']);
+    $codeTag = $this->getCodigoTag($item);
+    $quantity = $this->getSimpleTag('Cantidad',$item['quantity']);
+    $unit = $this->getSimpleTag('UnidadMedida',$item['unit']);
+    $unitName = $this->getSimpleTag('UnidadMedidaComercial',$item['unit_name']);
+    $detail = $this->getSimpleTag('Detalle',$item['detail']);
+    $price = $this->getSimpleTag('PrecioUnitario',$item['price']);
+    $total = $this->getSimpleTag('MontoTotal',$item['total']);
+    $subTotal = $this->getSimpleTag('SubTotal',$item['subtotal']);
+    $tax = $this->getImpuestoTag($item);
+    $totalLine = $this-getSimpleTag('MontoTotalLinea',$item['total_amount']);
+    
+    $tag->appendChild($lineNum);
+    $tag->appendChild($codeTag);
+    $tag->appendChild($quantity);
+    $tag->appendChild($unit);
+    $tag->appendChild($unitName);
+    $tag->appendChild($detail);
+    $tag->appendChild($price);
+    $tag->appendChild($total);
+    $tag->appendChild($subTotal);
+    $tag->appendChild($tax);
+    $tag->appendChild($totalLine);
+    
+    return $tag;
+  }
+  
+  protected function getCodigoTag(&$item) {
+    $codeTag = $this->_xml->createElement('Codigo');
+    $cType = $this->getSimpleTag('Tipo',$item['type']);
+    $cCode = $this->getSimpleTag('Codigo',$item['code']);
+    
+    $codeTag->appendChild($cType);
+    $codeTag->appendChild($cCode);
+    return $codeTag;
+  }
+  
+  protected function getImpuestoTag(&$item) {
+    $taxTag = $this->_xml->createElement('Impuesto');
+    $code = $this->getSimpleTag('Codigo',$item['tax']['code']);
+    $cost = $this->getSimpleTag('Tarifa',$item['tax']['cost']);
+    $amount = $this->getSimpleTag('Monto',$item['tax']['amount']);
+    
+    $taxTag->appendChild($code);
+    $taxTag->appendChild($cost);
+    $taxTag->appendChild($amount);
+    return $taxTag;
+  }
+  
+  
 
   protected function getSimpleTag($tagName, $value) {
     $tag = $this->_xml->createElement($tagName, $value);
