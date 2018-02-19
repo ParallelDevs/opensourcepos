@@ -28,5 +28,10 @@ class E_Envoice_CR_Library {
     $this->_ci->load->library('e_envoice_cr_auth');
     $this->_auth_token = $this->_ci->e_envoice_cr_auth->getLoginToken();
   }
+  
+  public function generateXml($general_data, $client, $emitter, $rows, $type){
+    $this->_ci->load->library('e_envoice_cr_xml_generator');
+    $this->_ci->e_envoice_cr_xml_generator->generateInvoiceXML($general_data, $client, $emitter, $rows, $type);
+  }
 
 }
