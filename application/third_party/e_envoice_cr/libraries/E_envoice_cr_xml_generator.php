@@ -27,6 +27,7 @@ class E_envoice_cr_xml_generator {
     $nodes[] = $this->getSimpleTag('CondicionVenta', $general_data['condition']);
     $nodes[] = $this->getSimpleTag('PlazoCredito', $general_data['p_credit']);
     $nodes[] = $this->getSimpleTag('MedioPago', $general_data['pay_type']);
+    $nodes[] = $this->getDetalleServicioTag($rows);
     
     foreach ($nodes as $node) {
       $root->appendChild($node);
