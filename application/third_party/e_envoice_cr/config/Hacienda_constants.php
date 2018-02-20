@@ -24,7 +24,7 @@ class Hacienda_constants {
 
   public static function get_id_types() {
     return [
-    self::ID_TYPE_PHYSICAL_PERSON_ID => "Physical person id",
+      self::ID_TYPE_PHYSICAL_PERSON_ID => "Physical person id",
       self::ID_TYPE_COMPANY_ID => "Company id",
       self::ID_TYPE_DIMEX_ID => "DIMEX",
       self::ID_TYPE_NITE_ID => "NITE",
@@ -36,6 +36,51 @@ class Hacienda_constants {
       self::ENVIRONMENT_TYPE_PROD => "Production",
       self::ENVIRONMENT_TYPE_STAG => "Sandbox",
     ];
+  }
+
+  public static function get_tagname_by_document_type($type) {
+    $tagName = '';
+
+    switch ($type) {
+      case self::DOCUMENT_TYPE_ELECTRONIC_BILL:
+        $tagName .= 'FacturaElectronica';
+        break;
+      case self::DOCUMENT_TYPE_ELECTRONIC_TICKET:
+        $tagName .= 'TiqueteElectronico';
+        break;
+      case self::DOCUMENT_TYPE_CREDIT_NOTE:
+        $tagName .= 'NotaCreditoElectronica';
+        break;
+      case self::DOCUMENT_TYPE_DEBIT_NOTE:
+        $tagName .= 'NotaDebitoElectronica';
+        break;
+      default:
+        $tagName .= '';
+        break;
+    }
+    return $tagName;
+  }
+
+  public static function get_xlmns_by_document_type($type) {
+    $xmlns = '';
+    switch ($type) {
+      case 'FE':
+        $xmlns .= 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/facturaElectronica';
+        break;
+      case 'TE':
+        $xmlns .= 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/tiqueteElectronico';
+        break;
+      case 'NC':
+        $xmlns .= 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaCreditoElectronica';
+        break;
+      case 'ND':
+        $xmlns .= 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaDebitoElectronica';
+        break;
+      default:
+        $xmlns .= '';
+        break;
+    }
+    return $xmlns;
   }
 
 }
