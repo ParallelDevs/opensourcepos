@@ -180,7 +180,7 @@ class E_envoice_cr_xml_generator {
     $children[] = $this->getSimpleTag('MontoTotal', $item['total']);
     $children[] = $this->getSimpleTag('SubTotal', $item['subtotal']);
     $children[] = $this->getImpuestoTag($item);
-    $children[] = $this - getSimpleTag('MontoTotalLinea', $item['total_amount']);
+    $children[] = $this->getSimpleTag('MontoTotalLinea', $item['total_amount']);
 
     foreach ($children as $child) {
       $tag->appendChild($child);
@@ -214,20 +214,19 @@ class E_envoice_cr_xml_generator {
   protected function getResumenFacturaTag(&$data) {
     $tag = $this->_xml->createElement('ResumenFactura');
     $children = array();
-    $children[] = $this->getSimpleTag('CodigoMoneda', $data[]);
-    $children[] = $this->getSimpleTag('TipoCambio', $data[]);
-    $children[] = $this->getSimpleTag('CodigoMoneda', $data[]);
-    $children[] = $this->getSimpleTag('TotalServGravados', $data[]);
-    $children[] = $this->getSimpleTag('TotalServExentos', $data[]);
-    $children[] = $this->getSimpleTag('TotalMercanciasGravadas', $data[]);
-    $children[] = $this->getSimpleTag('TotalMercanciasExentas', $data[]);
-    $children[] = $this->getSimpleTag('TotalGravado', $data[]);
-    $children[] = $this->getSimpleTag('TotalExento', $data[]);
-    $children[] = $this->getSimpleTag('TotalVenta', $data[]);
-    $children[] = $this->getSimpleTag('TotalDescuentos', $data[]);
-    $children[] = $this->getSimpleTag('TotalVentaNeta', $data[]);
-    $children[] = $this->getSimpleTag('TotalImpuesto', $data[]);
-    $children[] = $this->getSimpleTag('TotalComprobante', $data[]);
+    $children[] = $this->getSimpleTag('CodigoMoneda', $data['currency_code']);
+    $children[] = $this->getSimpleTag('TipoCambio', $data['currency_rate']);
+    $children[] = $this->getSimpleTag('TotalServGravados', $data['tsg']);
+    $children[] = $this->getSimpleTag('TotalServExentos', $data['tse']);
+    $children[] = $this->getSimpleTag('TotalMercanciasGravadas', $data['tmg']);
+    $children[] = $this->getSimpleTag('TotalMercanciasExentas', $data['tme']);
+    $children[] = $this->getSimpleTag('TotalGravado', $data['tg']);
+    $children[] = $this->getSimpleTag('TotalExento', $data['te']);
+    $children[] = $this->getSimpleTag('TotalVenta', $data['tv']);
+    $children[] = $this->getSimpleTag('TotalDescuentos', $data['td']);
+    $children[] = $this->getSimpleTag('TotalVentaNeta', $data['tvn']);
+    $children[] = $this->getSimpleTag('TotalImpuesto', $data['ti']);
+    $children[] = $this->getSimpleTag('TotalComprobante', $data['tc']);
 
     foreach ($children as $child) {
       $tag->appendChild($child);
