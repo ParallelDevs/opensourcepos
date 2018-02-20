@@ -30,6 +30,8 @@ class E_envoice_cr_xml_generator {
     $children[] = $this->getDetalleServicioTag($rows);
     $children[] = $this->getResumenFacturaTag($general_data);
     $children[] = $this->getInformacionReferenciaTag($general_data);
+    $children[] = $this->getNormativaTag($general_data);
+    $children[] = $this->getOtrosTag($general_data);
 
     foreach ($children as $node) {
       $root->appendChild($node);
@@ -242,11 +244,33 @@ class E_envoice_cr_xml_generator {
     $children[] = $this->getSimpleTag('FechaEmision', $data['date']);
     $children[] = $this->getSimpleTag('Codigo', $data['code']);
     $children[] = $this->getSimpleTag('Razon', $data['reason']);
-    
-    foreach($children as $child){
+
+    foreach ($children as $child) {
       $tag->appendChild($child);
     }
-    
+
+    return $tag;
+  }
+
+  protected function getNormativaTag(&$data) {
+    $tag = $this->_xml->createElement('Normativa');
+    $children = array();
+    $children[] = $this->getSimpleTag('NumeroResolucion', $data['num_res']);
+    $children[] = $this->getSimpleTag('FechaResolucion', $data['date_res']);
+    foreach ($children as $child) {
+      $tag->appendChild($child);
+    }
+    return $tag;
+  }
+
+  protected function getOtrosTag(&$data) {
+    $tag = $this->_xml->createElement('Otros');
+
+    foreach ($data as $element) {
+      $child = $this->getSimpleTag('OtroTexto', $element);
+      $tag->appendChild($child);
+    }
+
     return $tag;
   }
 
@@ -265,23 +289,9 @@ class E_envoice_cr_xml_generator {
    *   Tag name for the XML File.
    */
   private function getXmlTagName($type) {
-    $tagName = '';
-    switch ($type) {
-      case 'FE':
-        $tagName .= 'FacturaElectronica';
-        break;
-      case 'TE':
-        $tagName .= 'TiqueteElectronico';
-        break;
-      case 'NC':
-        $tagName .= 'NotaCreditoElectronica';
-        break;
-      case 'ND':
-        $tagName .= 'NotaDebitoElectronica';
-        break;
-      default:
-        $tagName .= 'root';
-        break;
+    $tagName = Hacienda_constants::get_tagname_by_document_type($type);
+    if (empty($tagName)) {
+      $tagName .= 'root';
     }
     return $tagName;
   }
@@ -296,24 +306,8 @@ class E_envoice_cr_xml_generator {
    *   Url to the XML document.
    */
   private function getXmlns($type) {
-    $xmlns = '';
-    switch ($type) {
-      case 'FE':
-        $xmlns .= 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/facturaElectronica';
-        break;
-      case 'TE':
-        $xmlns .= 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/tiqueteElectronico';
-        break;
-      case 'NC':
-        $xmlns .= 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaCreditoElectronica';
-        break;
-      case 'ND':
-        $xmlns .= 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaDebitoElectronica';
-        break;
-      default:
-        $xmlns .= '';
-        break;
-    }
+    $xmlns = Hacienda_constants::get_xlmns_by_document_type($type);
+    
     return $xmlns;
   }
 
