@@ -7,7 +7,7 @@ require_once dirname(__DIR__) . '/config/Hacienda_constants.php';
  *
  * @author pdev
  */
-class E_envoice_cr_Invoice {
+class E_envoice_cr_invoice {
 
   private $_invoice;
   private $_emitter;
