@@ -38,6 +38,7 @@ class E_envoice_cr_invoice {
     $this->_invoice['code'] = '02';
     $this->_invoice['reason'] = 'a';
     $this->_invoice['resolution'] = $this->getNormativa();
+    $this->_invoice['others'] = array($data['comments']);
   }
 
   public function getInvoiceData() {
@@ -117,9 +118,10 @@ class E_envoice_cr_invoice {
 
   protected function getNormativa() {
     $resolution = array(
-    'number' => 'DGT-R-48-2016',
-    'date' => '12-12-2016 08:08:12',
-   );
-   return $resolution;
+      'number' => 'DGT-R-48-2016',
+      'date' => '12-12-2016 08:08:12',
+    );
+    return $resolution;
   }
+
 }

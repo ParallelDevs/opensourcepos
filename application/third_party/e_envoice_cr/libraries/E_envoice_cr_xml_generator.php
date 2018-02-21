@@ -265,7 +265,7 @@ class E_envoice_cr_xml_generator {
   protected function getOtrosTag(&$data) {
     $tag = $this->_xml->createElement('Otros');
 
-    foreach ($data as $element) {
+    foreach ($data['others'] as $element) {
       $child = $this->getSimpleTag('OtroTexto', $element);
       $tag->appendChild($child);
     }
