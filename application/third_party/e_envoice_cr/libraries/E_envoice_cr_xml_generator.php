@@ -136,16 +136,21 @@ class E_envoice_cr_xml_generator {
 
   protected function getUbicacionTag($location) {
     $locationTag = $this->_xml->createElement('Ubicacion');
-    $prov = $this->getSimpleTag('Provincia', $location['prov']);
-    $cant = $this->getSimpleTag('Canton', $location['cant']);
-    $dist = $this->getSimpleTag('Distrito', $location['dist']);
-    $barr = $this->getSimpleTag('Barrio', $location['barr']);
-    $oth = $this->getSimpleTag('OtrasSenas', $location['other']);
-    $locationTag->appendChild($prov);
-    $locationTag->appendChild($cant);
-    $locationTag->appendChild($dist);
-    $locationTag->appendChild($barr);
-    $locationTag->appendChild($oth);
+    $children = array();
+    $children[] = $this->getSimpleTag('Provincia', $location['prov']);
+    $children[] = $this->getSimpleTag('Canton', $location['cant']);
+    $children[] = $this->getSimpleTag('Distrito', $location['dist']);
+
+    if (!empty($location['barr'])) {
+      $children[] = $this->getSimpleTag('Barrio', $location['barr']);
+    }
+    
+    $children[] = $this->getSimpleTag('OtrasSenas', $location['other']);
+
+    foreach ($children as $child) {
+      $locationTag->appendChild($child);
+    }
+
     return $locationTag;
   }
 
