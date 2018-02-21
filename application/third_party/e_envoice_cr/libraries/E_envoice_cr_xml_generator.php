@@ -31,8 +31,10 @@ class E_envoice_cr_xml_generator {
     $children[] = $this->getResumenFacturaTag($general_data);
     $children[] = $this->getInformacionReferenciaTag($general_data);
     $children[] = $this->getNormativaTag($general_data);
-    $children[] = $this->getOtrosTag($general_data);
-
+    
+    if (!empty($general_data['others'])) {
+      $children[] = $this->getOtrosTag($general_data);
+    }
     foreach ($children as $node) {
       $root->appendChild($node);
     }
@@ -144,7 +146,7 @@ class E_envoice_cr_xml_generator {
     if (!empty($location['barr'])) {
       $children[] = $this->getSimpleTag('Barrio', $location['barr']);
     }
-    
+
     $children[] = $this->getSimpleTag('OtrasSenas', $location['other']);
 
     foreach ($children as $child) {

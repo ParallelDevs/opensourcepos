@@ -31,6 +31,7 @@ class E_envoice_cr_invoice {
     $this->loadDocumentType($sale_type);
     $this->loadInvoiceData($data);
     $this->loadEmitterData();
+    $this->loadClientData($data);
   }
 
   public function getInvoiceData() {
@@ -49,7 +50,7 @@ class E_envoice_cr_invoice {
     return $this->_client;
   }
 
-  protected function loadInvoiceData(&$data) {    
+  protected function loadInvoiceData(&$data) {
     $this->_invoice['consecutive'] = $this->generateConsecutivo($data);
     $this->_invoice['key'] = $this->generateClave($data, $this->_invoice['consecutive']);
     $this->_invoice['date'] = $this->generateFechaEmision($data);
@@ -59,7 +60,7 @@ class E_envoice_cr_invoice {
     $this->_invoice['code'] = '02';
     $this->_invoice['reason'] = 'a';
     $this->_invoice['resolution'] = $this->getNormativa();
-    $this->_invoice['others'] = array($data['comments']);
+    $this->_invoice['others'] = $this->getOtros($data);
   }
 
   protected function loadDocumentType($sale_type) {
@@ -137,6 +138,17 @@ class E_envoice_cr_invoice {
     return $resolution;
   }
 
+  protected function getOtros(&$data) {
+    $others = array();
+    if(!empty($data['comments'])){
+      $others[] = $data['comments'];
+    }
+    if (array_key_exists('customer_comments', $data)) {
+      $others[] = $data["customer_comments"];
+    }
+    return $others;
+  }
+
   protected function loadEmitterData() {
     $name = $this->_ci->Appconfig->get('company');
     $commercial_name = $this->_ci->Appconfig->get('e_envoice_cr_name');
@@ -160,6 +172,19 @@ class E_envoice_cr_invoice {
       'dist' => format_invoice_number(3, 2),
       'other' => $otras_senas,
     );
+  }
+
+  protected function loadClientData(&$data) {
+    $name = $data['first_name'] . ' ' . $data['last_name'];
+    $commercial_name = strcasecmp($name, $data['customer']) != 0 ? $data['customer'] : '';
+    $email = $data['customer_email'];
+    $this->_client['name'] = $name;
+    $this->_client['id'] = array();
+    $this->_client['commercialName'] = $commercial_name;
+    $this->_client['email'] = $email;
+    $this->_client['phone'] = array();
+    $this->_client['fax'] = array();
+    $this->_client['location'] = array();
   }
 
 }

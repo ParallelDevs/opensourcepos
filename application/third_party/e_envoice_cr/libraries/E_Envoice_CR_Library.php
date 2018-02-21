@@ -34,7 +34,7 @@ class E_Envoice_CR_Library {
     $this->_ci->load->library('e_envoice_cr_xml_generator');
     $this->_ci->e_envoice_cr_invoice->mapSale($sale_data, $sale_type);
     $general_data = $this->_ci->e_envoice_cr_invoice->getInvoiceData();
-    $client = array();
+    $client = $this->_ci->e_envoice_cr_invoice->getClientData();
     $emitter = $this->_ci->e_envoice_cr_invoice->getEmitterData();
     $rows = array();
     $type = $this->_ci->e_envoice_cr_invoice->getDocumentType();
