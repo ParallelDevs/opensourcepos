@@ -27,8 +27,29 @@ class E_envoice_cr_invoice {
     $this->_ci->load->model('Appconfig');
   }
 
-  public function loadInvoice(&$data, $sale_type) {
+  public function mapSale(&$data, $sale_type) {
     $this->loadDocumentType($sale_type);
+    $this->loadInvoiceData($data);
+    $this->loadEmitterData();
+  }
+
+  public function getInvoiceData() {
+    return $this->_invoice;
+  }
+
+  public function getDocumentType() {
+    return $this->_doc_type;
+  }
+
+  public function getEmitterData() {
+    return $this->_emitter;
+  }
+
+  public function getClientData() {
+    return $this->_client;
+  }
+
+  protected function loadInvoiceData(&$data) {    
     $this->_invoice['consecutive'] = $this->generateConsecutivo($data);
     $this->_invoice['key'] = $this->generateClave($data, $this->_invoice['consecutive']);
     $this->_invoice['date'] = $this->generateFechaEmision($data);
@@ -39,14 +60,6 @@ class E_envoice_cr_invoice {
     $this->_invoice['reason'] = 'a';
     $this->_invoice['resolution'] = $this->getNormativa();
     $this->_invoice['others'] = array($data['comments']);
-  }
-
-  public function getInvoiceData() {
-    return $this->_invoice;
-  }
-
-  public function getDocumentType() {
-    return $this->_doc_type;
   }
 
   protected function loadDocumentType($sale_type) {
@@ -122,6 +135,31 @@ class E_envoice_cr_invoice {
       'date' => '12-12-2016 08:08:12',
     );
     return $resolution;
+  }
+
+  protected function loadEmitterData() {
+    $name = $this->_ci->Appconfig->get('company');
+    $commercial_name = $this->_ci->Appconfig->get('e_envoice_cr_name');
+    $id = $this->_ci->Appconfig->get('e_envoice_cr_id');
+    $id_type = $this->_ci->Appconfig->get('e_envoice_cr_id_type');
+    $email = $this->_ci->Appconfig->get('email');
+    $otras_senas = $this->_ci->Appconfig->get('address');
+    if (strlen($otras_senas) > 160) {
+      $otras_senas = substr($otras_senas, 0, 160);
+    }
+
+    $this->_emitter['name'] = $name;
+    $this->_emitter['id'] = array('type' => $id_type, 'number' => $id);
+    $this->_emitter['commercialName'] = $commercial_name;
+    $this->_emitter['email'] = $email;
+    $this->_emitter['phone'] = array();
+    $this->_emitter['fax'] = array();
+    $this->_emitter['location'] = array(
+      'prov' => 1,
+      'cant' => format_invoice_number(13, 2),
+      'dist' => format_invoice_number(3, 2),
+      'other' => $otras_senas,
+    );
   }
 
 }
