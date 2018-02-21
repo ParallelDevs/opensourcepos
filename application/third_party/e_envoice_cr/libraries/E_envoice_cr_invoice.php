@@ -26,27 +26,32 @@ class E_envoice_cr_invoice {
     $this->_ci->load->model('Appconfig');
   }
 
-  public function loadInvoice(&$data) {
-    $key = $this->generateClave($data);    
-    $this->_invoice['key'] = $key;
-    $this->_invoice['consecutive'] = generate_invoice_consecutive($key);
+  public function loadInvoice(&$data, $doc_type) {
+    $this->_invoice['consecutive'] = $this->generateConsecutivo($data, $doc_type);
+    $this->_invoice['key'] = $this->generateClave($data, $this->_invoice['consecutive']);
     $this->_invoice['date'] = $this->generateFechaEmision($data);
   }
 
-  protected function generateClave(&$data) {
-    $invoice_number = format_invoice_number($data['invoice_number'], 10, '0');
-    $secure_code = format_invoice_number($data['invoice_number'], 8, '0');
+  public function getInvoiceData() {
+    return $this->_invoice;
+  }
+
+  protected function generateClave(&$data, $consecutive) {
+    $secure_code = format_invoice_number($data['invoice_number'], 8);
     $id = $this->_ci->Appconfig->get('e_envoice_cr_id');
-    $id_user = format_invoice_number($id, 12, '0');
-    $key = generate_invoice_key($invoice_number, $secure_code, $id_user);
+    $id_user = format_invoice_number($id, 12);
+    $key = generate_invoice_key($consecutive, $secure_code, $id_user);
     return $key;
   }
-  
-  protected function generateFechaEmision(&$data) {    
+
+  protected function generateConsecutivo(&$data, $doc_type) {
+    $consecutive = generate_invoice_consecutive(1, 1, $doc_type, $data['invoice_number']);
+    return $consecutive;
+  }
+
+  protected function generateFechaEmision(&$data) {
     $date = format_invoice_date($data['transaction_time']);
     return $date;
   }
-  
-  
 
 }
