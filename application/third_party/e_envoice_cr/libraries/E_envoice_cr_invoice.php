@@ -30,6 +30,8 @@ class E_envoice_cr_invoice {
     $this->_invoice['consecutive'] = $this->generateConsecutivo($data, $doc_type);
     $this->_invoice['key'] = $this->generateClave($data, $this->_invoice['consecutive']);
     $this->_invoice['date'] = $this->generateFechaEmision($data);
+    $this->_invoice['condition'] = $this->getCondicionVenta($data);
+    $this->_invoice['pay_types'] = $this->getMedioPago($data);
   }
 
   public function getInvoiceData() {
@@ -54,4 +56,34 @@ class E_envoice_cr_invoice {
     return $date;
   }
 
+  protected function getCondicionVenta($data) {
+    if (true == $data['payments_cover_total']) {
+      return '01';
+    }
+    return '99';
+  }
+
+  protected function getMedioPago($data) {
+    $payments=array();
+    foreach($data['payments'] as $pay_type){
+      switch ($pay_type['payment_type']) {
+        case 'Cash':
+          array_push($payments, '01');
+          break;
+        case 'Debit Card':
+        case 'Credit Card':
+          array_push($payments, '02');
+          break;
+        case 'Check':
+          array_push($payments, '03');
+          break;
+        case 'Due':        
+        case 'Gift Card':
+        default:
+          array_push($payments, '99');
+          break;
+      }
+    }    
+    return array_unique($payments);
+  }
 }
