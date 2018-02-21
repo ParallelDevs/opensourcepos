@@ -14,6 +14,7 @@ class E_envoice_cr_invoice {
   private $_client;
   private $_cart;
   private $_ci;
+  private $_doc_type;
 
   public function __construct() {
     $this->_ci = & get_instance();
@@ -26,16 +27,40 @@ class E_envoice_cr_invoice {
     $this->_ci->load->model('Appconfig');
   }
 
-  public function loadInvoice(&$data, $doc_type) {
-    $this->_invoice['consecutive'] = $this->generateConsecutivo($data, $doc_type);
+  public function loadInvoice(&$data, $sale_type) {
+    $this->loadDocumentType($sale_type);
+    $this->_invoice['consecutive'] = $this->generateConsecutivo($data);
     $this->_invoice['key'] = $this->generateClave($data, $this->_invoice['consecutive']);
     $this->_invoice['date'] = $this->generateFechaEmision($data);
     $this->_invoice['condition'] = $this->getCondicionVenta($data);
     $this->_invoice['pay_types'] = $this->getMedioPago($data);
+    $this->_invoice['document_code'] = Hacienda_constants::get_code_by_document_type($this->_doc_type);
+    $this->_invoice['code'] = '02';
+    $this->_invoice['reason'] = 'a';
+    $this->_invoice['resolution'] = $this->getNormativa();
   }
 
   public function getInvoiceData() {
     return $this->_invoice;
+  }
+
+  public function getDocumentType() {
+    return $this->_doc_type;
+  }
+
+  protected function loadDocumentType($sale_type) {
+    switch ($sale_type) {
+      case 1://SALE_TYPE_INVOICE
+        $this->_doc_type = Hacienda_constants::DOCUMENT_TYPE_FE;
+        break;
+      case 0://SALE_TYPE_POS
+      case 2://SALE_TYPE_WORK_ORDER
+      case 3://SALE_TYPE_QUOTE
+      case 4://SALE_TYPE_RETURN
+      default :
+        $this->_doc_type = '';
+        break;
+    }
   }
 
   protected function generateClave(&$data, $consecutive) {
@@ -46,8 +71,11 @@ class E_envoice_cr_invoice {
     return $key;
   }
 
-  protected function generateConsecutivo(&$data, $doc_type) {
-    $consecutive = generate_invoice_consecutive(1, 1, $doc_type, $data['invoice_number']);
+  protected function generateConsecutivo(&$data) {
+    $sucursal = 1;
+    $terminal = 1;
+    $doc_type = Hacienda_constants::get_code_by_document_type($this->_doc_type);
+    $consecutive = generate_invoice_consecutive($sucursal, $terminal, $doc_type, $data['invoice_number']);
     return $consecutive;
   }
 
@@ -64,8 +92,8 @@ class E_envoice_cr_invoice {
   }
 
   protected function getMedioPago($data) {
-    $payments=array();
-    foreach($data['payments'] as $pay_type){
+    $payments = array();
+    foreach ($data['payments'] as $pay_type) {
       switch ($pay_type['payment_type']) {
         case 'Cash':
           array_push($payments, '01');
@@ -77,13 +105,21 @@ class E_envoice_cr_invoice {
         case 'Check':
           array_push($payments, '03');
           break;
-        case 'Due':        
+        case 'Due':
         case 'Gift Card':
         default:
           array_push($payments, '99');
           break;
       }
-    }    
+    }
     return array_unique($payments);
+  }
+
+  protected function getNormativa() {
+    $resolution = array(
+    'number' => 'DGT-R-48-2016',
+    'date' => '12-12-2016 08:08:12',
+   );
+   return $resolution;
   }
 }

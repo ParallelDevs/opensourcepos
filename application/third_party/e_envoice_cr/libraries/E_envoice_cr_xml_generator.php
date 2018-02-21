@@ -238,7 +238,7 @@ class E_envoice_cr_xml_generator {
   protected function getInformacionReferenciaTag(&$data) {
     $tag = $this->_xml->createElement('InformacionReferencia');
     $children = array();
-    $children[] = $this->getSimpleTag('TipoDoc', $data['doc_type']);
+    $children[] = $this->getSimpleTag('TipoDoc', $data['document_code']);
     $children[] = $this->getSimpleTag('Numero', $data['key']);
     $children[] = $this->getSimpleTag('FechaEmision', $data['date']);
     $children[] = $this->getSimpleTag('Codigo', $data['code']);
@@ -254,8 +254,8 @@ class E_envoice_cr_xml_generator {
   protected function getNormativaTag(&$data) {
     $tag = $this->_xml->createElement('Normativa');
     $children = array();
-    $children[] = $this->getSimpleTag('NumeroResolucion', $data['num_res']);
-    $children[] = $this->getSimpleTag('FechaResolucion', $data['date_res']);
+    $children[] = $this->getSimpleTag('NumeroResolucion', $data['resolution']['number']);
+    $children[] = $this->getSimpleTag('FechaResolucion', $data['resolution']['date']);
     foreach ($children as $child) {
       $tag->appendChild($child);
     }

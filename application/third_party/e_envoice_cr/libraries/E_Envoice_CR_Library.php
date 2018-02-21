@@ -29,15 +29,15 @@ class E_Envoice_CR_Library {
     $this->_auth_token = $this->_ci->e_envoice_cr_auth->getLoginToken();
   }
 
-  public function generateXml(&$sale_data, $docType) {
+  public function generateXml(&$sale_data, $sale_type) {
     $this->_ci->load->library('e_envoice_cr_invoice');
     $this->_ci->load->library('e_envoice_cr_xml_generator');
-    $this->_ci->e_envoice_cr_invoice->loadInvoice($sale_data,$docType);
+    $this->_ci->e_envoice_cr_invoice->loadInvoice($sale_data, $sale_type);
     $general_data = $this->_ci->e_envoice_cr_invoice->getInvoiceData();
     $client = array();
     $emitter = array();
     $rows = array();
-    $type = $docType;
+    $type = $this->_ci->e_envoice_cr_invoice->getDocumentType();
     $this->_ci->e_envoice_cr_xml_generator->generateInvoiceXML($general_data, $client, $emitter, $rows, $type);
   }
 
