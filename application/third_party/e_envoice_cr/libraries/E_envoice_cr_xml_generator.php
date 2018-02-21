@@ -26,7 +26,7 @@ class E_envoice_cr_xml_generator {
     $children[] = $this->getReceptorTag($client);
     $children[] = $this->getSimpleTag('CondicionVenta', $general_data['condition']);
     $children[] = $this->getSimpleTag('PlazoCredito', $general_data['p_credit']);
-    $children[] = $this->getSimpleTag('MedioPago', $general_data['pay_type']);
+    $this->getMedioPagoTag($general_data['pay_types'], $children);
     $children[] = $this->getDetalleServicioTag($rows);
     $children[] = $this->getResumenFacturaTag($general_data);
     $children[] = $this->getInformacionReferenciaTag($general_data);
@@ -278,6 +278,13 @@ class E_envoice_cr_xml_generator {
     return $tag;
   }
 
+  protected function getMedioPagoTag(&$data, &$children) {
+    foreach ($data as $pay_code) {
+      $pay_type = $this->getSimpleTag('MedioPago', $pay_code);
+      array_push($children, $pay_type);
+    }
+  }
+
   /**
    * Gets the Invoice xml tag name according to the type of invoice.
    *
@@ -287,7 +294,7 @@ class E_envoice_cr_xml_generator {
    * @return null|string
    *   Tag name for the XML File.
    */
-  private function getXmlTagName($type) {
+  protected function getXmlTagName($type) {
     $tagName = Hacienda_constants::get_tagname_by_document_type($type);
     if (empty($tagName)) {
       $tagName .= 'root';
@@ -304,9 +311,8 @@ class E_envoice_cr_xml_generator {
    * @return string
    *   Url to the XML document.
    */
-  private function getXmlns($type) {
+  protected function getXmlns($type) {
     $xmlns = Hacienda_constants::get_xlmns_by_document_type($type);
-    
     return $xmlns;
   }
 
