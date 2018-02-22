@@ -1,10 +1,11 @@
 <?php 
 
-$lang["items_add_minus"] = "";
+$lang["items_add_minus"] = "Lager att lägga till eller ta bort.";
 $lang["items_allow_alt_desciption"] = "";
-$lang["items_allow_alt_description"] = "";
-$lang["items_bulk_edit"] = "";
-$lang["items_buy_price_required"] = "";
+$lang["items_allow_alt_description"] = "Tillåt alternativ beskrivning";
+$lang["items_amount_entry"] = "Belopp";
+$lang["items_bulk_edit"] = "Massändra";
+$lang["items_buy_price_required"] = "Köppriset är ett obligatoriskt fält.";
 $lang["items_cannot_be_deleted"] = "";
 $lang["items_cannot_find_item"] = "";
 $lang["items_category"] = "";
@@ -17,6 +18,7 @@ $lang["items_change_image"] = "";
 $lang["items_confirm_bulk_edit"] = "";
 $lang["items_confirm_bulk_edit_wipe_taxes"] = "";
 $lang["items_confirm_delete"] = "";
+$lang["items_confirm_restore"] = "";
 $lang["items_cost_price"] = "";
 $lang["items_cost_price_number"] = "";
 $lang["items_cost_price_required"] = "";
@@ -92,6 +94,7 @@ $lang["items_supplier"] = "";
 $lang["items_tax_1"] = "";
 $lang["items_tax_2"] = "";
 $lang["items_tax_percent"] = "";
+$lang["items_tax_percent_number"] = "";
 $lang["items_tax_percent_required"] = "";
 $lang["items_tax_percents"] = "";
 $lang["items_type"] = "";
