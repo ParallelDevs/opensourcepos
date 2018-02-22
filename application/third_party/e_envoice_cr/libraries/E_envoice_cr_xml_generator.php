@@ -31,7 +31,7 @@ class E_envoice_cr_xml_generator {
     $children[] = $this->getResumenFacturaTag($general_data);
     $children[] = $this->getInformacionReferenciaTag($general_data);
     $children[] = $this->getNormativaTag($general_data);
-    
+
     if (!empty($general_data['others'])) {
       $children[] = $this->getOtrosTag($general_data);
     }
@@ -181,13 +181,25 @@ class E_envoice_cr_xml_generator {
     $children[] = $this->getCodigoTag($item);
     $children[] = $this->getSimpleTag('Cantidad', $item['quantity']);
     $children[] = $this->getSimpleTag('UnidadMedida', $item['unit']);
-    $children[] = $this->getSimpleTag('UnidadMedidaComercial', $item['unit_name']);
+    
+    if (!empty($item['unit_name'])) {
+      $children[] = $this->getSimpleTag('UnidadMedidaComercial', $item['unit_name']);
+    }
     $children[] = $this->getSimpleTag('Detalle', $item['detail']);
     $children[] = $this->getSimpleTag('PrecioUnitario', $item['price']);
     $children[] = $this->getSimpleTag('MontoTotal', $item['total']);
+    
+    if(!empty($item['discount'])){
+      $children[]= $this->getSimpleTag('MontoDescuento', $item['discount']['amount']);
+      $children[]= $this->getSimpleTag('NaturalezaDescuento', $item['discount']['reason']);
+    }
+    
     $children[] = $this->getSimpleTag('SubTotal', $item['subtotal']);
-    $children[] = $this->getImpuestoTag($item);
-    $children[] = $this->getSimpleTag('MontoTotalLinea', $item['total_amount']);
+    if(!empty($item['tax'])){
+      $children[] = $this->getImpuestoTag($item);
+    }
+    
+    $children[] = $this->getSimpleTag('MontoTotalLinea', $item['line_total_amount']);
 
     foreach ($children as $child) {
       $tag->appendChild($child);
@@ -198,8 +210,8 @@ class E_envoice_cr_xml_generator {
 
   protected function getCodigoTag(&$item) {
     $codeTag = $this->_xml->createElement('Codigo');
-    $cType = $this->getSimpleTag('Tipo', $item['type']);
-    $cCode = $this->getSimpleTag('Codigo', $item['code']);
+    $cType = $this->getSimpleTag('Tipo', $item['code']['type']);
+    $cCode = $this->getSimpleTag('Codigo', $item['code']['number']);
 
     $codeTag->appendChild($cType);
     $codeTag->appendChild($cCode);

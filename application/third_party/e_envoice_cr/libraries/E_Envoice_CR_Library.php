@@ -36,7 +36,7 @@ class E_Envoice_CR_Library {
     $general_data = $this->_ci->e_envoice_cr_invoice->getInvoiceData();
     $client = $this->_ci->e_envoice_cr_invoice->getClientData();
     $emitter = $this->_ci->e_envoice_cr_invoice->getEmitterData();
-    $rows = array();
+    $rows = $this->_ci->e_envoice_cr_invoice->getCartData();
     $type = $this->_ci->e_envoice_cr_invoice->getDocumentType();
     $this->_ci->e_envoice_cr_xml_generator->generateInvoiceXML($general_data, $client, $emitter, $rows, $type);
   }

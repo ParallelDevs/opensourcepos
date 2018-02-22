@@ -32,6 +32,7 @@ class E_envoice_cr_invoice {
     $this->loadInvoiceData($data);
     $this->loadEmitterData();
     $this->loadClientData($data);
+    $this->loadCart($data);
   }
 
   public function getInvoiceData() {
@@ -48,6 +49,10 @@ class E_envoice_cr_invoice {
 
   public function getClientData() {
     return $this->_client;
+  }
+
+  public function getCartData() {
+    return $this->_cart;
   }
 
   protected function loadInvoiceData(&$data) {
@@ -140,7 +145,7 @@ class E_envoice_cr_invoice {
 
   protected function getOtros(&$data) {
     $others = array();
-    if(!empty($data['comments'])){
+    if (!empty($data['comments'])) {
       $others[] = $data['comments'];
     }
     if (array_key_exists('customer_comments', $data)) {
@@ -185,6 +190,44 @@ class E_envoice_cr_invoice {
     $this->_client['phone'] = array();
     $this->_client['fax'] = array();
     $this->_client['location'] = array();
+  }
+
+  protected function loadCart(&$data) {
+    foreach ($data['cart'] as $item) {
+      $line = $this->loadItem($item);
+      array_push($this->_cart, $line);
+    }
+  }
+
+  protected function loadItem(&$item) {
+    $discount = doubleval($item['discount']);
+    $quantity = doubleval($item['quantity']);
+    $price = doubleval($item['price']);
+    $total_amount = $quantity * $price;
+    $subtotal = $total_amount - $discount;
+    $tax_amount = 0.0;
+    $line_total_amount = $subtotal + $tax_amount;
+
+    $line = array(
+      'line' => $item['line'],
+      'quantity' => $quantity,
+      'detail' => $item['name'],
+      'price' => $price,
+      'code' => array('type' => '04', 'number' => $item['item_number']),
+      'unit' => 'Unid',
+      'total' => $total_amount,
+      'subtotal' => $subtotal,
+      'line_total_amount' => $line_total_amount,
+      'discount' => array(),
+      'tax' => array(),
+    );
+
+    if ($discount > 0.0) {
+      $line['discount']['amount'] = $discount;
+      $line['discount']['reason'] = 'Discount';
+    }
+
+    return $line;
   }
 
 }
