@@ -1,0 +1,21 @@
+{
+    "name": "paralleldevs/e_envoice_cr",
+    "description": "CodeIgniter package for integrating costarican electronic invoice",
+    "type": "library",
+    "require": {
+        "php": "^5.5 || ^7.0",        
+        "ext-SimpleXML": "*",
+        "ext-xml": "*",
+        "ext-xmlreader": "*",
+        "ext-xmlwriter": "*",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "rinvex/country": "^3.1"
+    },
+    "authors": [
+        {
+            "name": "Alonso Mora",
+            "email": "a.mora@paralleldevs.com"
+        }
+    ]
+}

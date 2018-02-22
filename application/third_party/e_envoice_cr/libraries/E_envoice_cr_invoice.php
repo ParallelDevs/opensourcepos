@@ -1,6 +1,9 @@
 <?php
 
 require_once dirname(__DIR__) . '/config/Hacienda_constants.php';
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+use Rinvex\Country\Country;
 
 /**
  * Description of E_envoice_cr_Invoice
@@ -66,6 +69,23 @@ class E_envoice_cr_invoice {
     $this->_invoice['reason'] = 'a';
     $this->_invoice['resolution'] = $this->getNormativa();
     $this->_invoice['others'] = $this->getOtros($data);
+
+    $country_code = $this->_ci->Appconfig->get('country_codes');
+    $country = country($country_code);
+    $currency_info = $country->getCurrency();
+    $this->_invoice['currency_code'] = $currency_info['iso_4217_code'];
+    $this->_invoice['currency_rate'] = 0;
+    $this->_invoice['tsg']=0;
+    $this->_invoice['tse']=0;
+    $this->_invoice['tmg']=0;
+    $this->_invoice['tme']=0;
+    $this->_invoice['tg']=0;
+    $this->_invoice['te']=0;
+    $this->_invoice['tv']=0;
+    $this->_invoice['td']=0;
+    $this->_invoice['tvn']=0;
+    $this->_invoice['ti']=0;
+    $this->_invoice['tc']=0;
   }
 
   protected function loadDocumentType($sale_type) {
@@ -204,26 +224,27 @@ class E_envoice_cr_invoice {
     $quantity = doubleval($item['quantity']);
     $price = doubleval($item['price']);
     $total_amount = $quantity * $price;
-    $subtotal = $total_amount - $discount;
+    $discount_amount = $total_amount * ($discount / 100);
+    $subtotal = $total_amount - $discount_amount;
     $tax_amount = 0.0;
     $line_total_amount = $subtotal + $tax_amount;
 
     $line = array(
       'line' => $item['line'],
-      'quantity' => $quantity,
+      'quantity' => round($quantity, 3),
       'detail' => $item['name'],
-      'price' => $price,
+      'price' => round($price, 5),
       'code' => array('type' => '04', 'number' => $item['item_number']),
       'unit' => 'Unid',
-      'total' => $total_amount,
-      'subtotal' => $subtotal,
-      'line_total_amount' => $line_total_amount,
+      'total' => round($total_amount, 5),
+      'subtotal' => round($subtotal, 5),
+      'line_total_amount' => round($line_total_amount, 5),
       'discount' => array(),
       'tax' => array(),
     );
 
     if ($discount > 0.0) {
-      $line['discount']['amount'] = $discount;
+      $line['discount']['amount'] = round($discount_amount, 5);
       $line['discount']['reason'] = 'Discount';
     }
 
