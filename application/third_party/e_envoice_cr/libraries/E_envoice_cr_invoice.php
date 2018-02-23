@@ -262,11 +262,13 @@ class E_envoice_cr_invoice {
   }
 
   protected function getItemTaxes(&$item, $client_id, &$total_tax_line) {
-    $customer = $this->_ci->Customer->get_info($customer_id);
-    return $this->getItemAppliedTaxes($item, $customer, $total_tax_line);
+    $customer = $this->_ci->Customer->get_info($client_id);
+    $general_taxes = $this->getGeneralTaxes($item, $customer, $total_tax_line);
+    $specific_taxes = $this->getSpecificTaxes($item, $total_tax_line);
+    return $general_taxes + $specific_taxes;
   }
 
-  protected function getItemAppliedTaxes(&$item, &$customer, &$total_tax_line) {
+  protected function getGeneralTaxes(&$item, &$customer, &$total_tax_line) {
     $taxes = array();
     $register_mode = $this->_ci->config->item('default_register_mode');
     if ($this->_ci->config->item('customer_sales_tax_support') == '1') {
@@ -325,4 +327,33 @@ class E_envoice_cr_invoice {
     return $taxes;
   }
 
+  protected function getSpecificTaxes(&$item, &$total_tax_line) {
+    $tax_info = $this->_ci->Item_taxes->get_info($item['item_id']);
+    $tax_decimals = tax_decimals();
+    $taxes = array();
+    foreach ($tax_info as $tax) {
+      // This computes tax for each line item and adds it to the tax type total
+      $tax_basis = $this->_ci->sale_lib->get_item_total($item['quantity'], $item['price'], $item['discount'], TRUE);
+      $tax_amount = 0;
+
+      if ($this->_ci->config->item('tax_included')) {
+        $tax_amount = $this->_ci->tax_lib->get_item_tax($item['quantity'], $item['price'], $item['discount'], $tax['percent']);
+      }
+      elseif ($this->_ci->config->item('customer_sales_tax_support') == '0') {
+        $tax_amount = $this->_ci->tax_lib->get_sales_tax_for_amount($tax_basis, $tax['percent'], '0', $tax_decimals);
+      }
+
+      if ($tax_amount <> 0) {
+        $total_tax_line += $tax_amount;
+        $tax_line = array(
+          'code' => $tax['name'],
+          'rate' => round($tax['percent'],2),
+          'amount' => round($tax_amount,5),
+        );
+        array_push($taxes, $tax_line);
+      }
+    }
+
+    return $taxes;
+  }
 }
