@@ -36,6 +36,7 @@ class E_envoice_cr_invoice {
     $this->loadEmitterData();
     $this->loadClientData($data);
     $this->loadCart($data, $client_id);
+    $this->calculateInvoiceSummary();
   }
 
   public function getInvoiceData() {
@@ -74,18 +75,18 @@ class E_envoice_cr_invoice {
     $country = country($country_code);
     $currency_info = $country->getCurrency();
     $this->_invoice['currency_code'] = $currency_info['iso_4217_code'];
-    $this->_invoice['currency_rate'] = 0;
-    $this->_invoice['tsg'] = 0;
-    $this->_invoice['tse'] = 0;
-    $this->_invoice['tmg'] = 0;
-    $this->_invoice['tme'] = 0;
-    $this->_invoice['tg'] = 0;
-    $this->_invoice['te'] = 0;
-    $this->_invoice['tv'] = 0;
-    $this->_invoice['td'] = 0;
-    $this->_invoice['tvn'] = 0;
-    $this->_invoice['ti'] = 0;
-    $this->_invoice['tc'] = 0;
+    $this->_invoice['currency_rate'] = 0.0;
+    $this->_invoice['tsg'] = 0.0;
+    $this->_invoice['tse'] = 0.0;
+    $this->_invoice['tmg'] = 0.0;
+    $this->_invoice['tme'] = 0.0;
+    $this->_invoice['tg'] = 0.0;
+    $this->_invoice['te'] = 0.0;
+    $this->_invoice['tv'] = 0.;
+    $this->_invoice['td'] = 0.0;
+    $this->_invoice['tvn'] = 0.0;
+    $this->_invoice['ti'] = 0.0;
+    $this->_invoice['tc'] = 0.0;
   }
 
   protected function loadDocumentType($sale_type) {
@@ -256,8 +257,7 @@ class E_envoice_cr_invoice {
       $line['discount']['amount'] = round($discount_amount, 5);
       $line['discount']['reason'] = 'Discount';
     }
-    $this->_invoice['td'] += $discount_amount;
-    $this->_invoice['ti'] += $tax_amount;
+    $this->addLineToSummary($item['stock_type'], $discount_amount, $tax_amount, $total_amount);
     return $line;
   }
 
@@ -347,8 +347,8 @@ class E_envoice_cr_invoice {
         $total_tax_line += $tax_amount;
         $tax_line = array(
           'code' => $tax['name'],
-          'rate' => round($tax['percent'],2),
-          'amount' => round($tax_amount,5),
+          'rate' => round($tax['percent'], 2),
+          'amount' => round($tax_amount, 5),
         );
         array_push($taxes, $tax_line);
       }
@@ -356,4 +356,43 @@ class E_envoice_cr_invoice {
 
     return $taxes;
   }
+
+  protected function addLineToSummary($stock_type, $line_discount_amount, $line_tax_amount, $line_total) {
+    $amount_mg = 0.0;
+    $amount_me = 0.0;
+    $amount_sg = 0.0;
+    $amount_se = 0.0;
+    if ($stock_type != '0') { // non-stock item ~ service
+      if ($line_tax_amount <> 0.0) {
+        $amount_sg += $line_total;
+      }
+      else {
+        $amount_se += $line_total;
+      }
+    }
+    else {
+      if ($line_tax_amount <> 0.0) {
+        $amount_mg += $line_total;
+      }
+      else {
+        $amount_me += $line_total;
+      }
+    }
+
+    $this->_invoice['tmg'] += $amount_mg;
+    $this->_invoice['tme'] += $amount_me;
+    $this->_invoice['tsg'] += $amount_sg;
+    $this->_invoice['tse'] += $amount_se;
+    $this->_invoice['td'] += $line_discount_amount;
+    $this->_invoice['ti'] += $line_tax_amount;
+  }
+
+  protected function calculateInvoiceSummary() {
+    $this->_invoice['tg'] = $this->_invoice['tsg'] + $this->_invoice['tmg'];
+    $this->_invoice['te'] = $this->_invoice['tse'] + $this->_invoice['tme'];
+    $this->_invoice['tv'] = $this->_invoice['tg'] + $this->_invoice['te'];
+    $this->_invoice['tvn'] = $this->_invoice['tv'] - $this->_invoice['td'];
+    $this->_invoice['tc'] = $this->_invoice['tvn'] + $this->_invoice['ti'];
+  }
+
 }
