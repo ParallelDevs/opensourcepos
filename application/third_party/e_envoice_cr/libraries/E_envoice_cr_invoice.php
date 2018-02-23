@@ -30,12 +30,12 @@ class E_envoice_cr_invoice {
     $this->_ci->load->model('Appconfig');
   }
 
-  public function mapSale(&$data, $sale_type) {
+  public function mapSale(&$data, $sale_type, $client_id) {
     $this->loadDocumentType($sale_type);
     $this->loadInvoiceData($data);
     $this->loadEmitterData();
     $this->loadClientData($data);
-    $this->loadCart($data);
+    $this->loadCart($data, $client_id);
   }
 
   public function getInvoiceData() {
@@ -75,17 +75,17 @@ class E_envoice_cr_invoice {
     $currency_info = $country->getCurrency();
     $this->_invoice['currency_code'] = $currency_info['iso_4217_code'];
     $this->_invoice['currency_rate'] = 0;
-    $this->_invoice['tsg']=0;
-    $this->_invoice['tse']=0;
-    $this->_invoice['tmg']=0;
-    $this->_invoice['tme']=0;
-    $this->_invoice['tg']=0;
-    $this->_invoice['te']=0;
-    $this->_invoice['tv']=0;
-    $this->_invoice['td']=0;
-    $this->_invoice['tvn']=0;
-    $this->_invoice['ti']=0;
-    $this->_invoice['tc']=0;
+    $this->_invoice['tsg'] = 0;
+    $this->_invoice['tse'] = 0;
+    $this->_invoice['tmg'] = 0;
+    $this->_invoice['tme'] = 0;
+    $this->_invoice['tg'] = 0;
+    $this->_invoice['te'] = 0;
+    $this->_invoice['tv'] = 0;
+    $this->_invoice['td'] = 0;
+    $this->_invoice['tvn'] = 0;
+    $this->_invoice['ti'] = 0;
+    $this->_invoice['tc'] = 0;
   }
 
   protected function loadDocumentType($sale_type) {
@@ -136,6 +136,7 @@ class E_envoice_cr_invoice {
     foreach ($data['payments'] as $pay_type) {
       switch ($pay_type['payment_type']) {
         case 'Cash':
+        case 'Efectivo':
           array_push($payments, '01');
           break;
         case 'Debit Card':
@@ -143,6 +144,7 @@ class E_envoice_cr_invoice {
           array_push($payments, '02');
           break;
         case 'Check':
+        case 'Cheque':
           array_push($payments, '03');
           break;
         case 'Due':
@@ -212,14 +214,20 @@ class E_envoice_cr_invoice {
     $this->_client['location'] = array();
   }
 
-  protected function loadCart(&$data) {
+  protected function loadCart(&$data, $client_id) {
+    $this->_ci->load->helper('locale');
+    $this->_ci->load->library('sale_lib');
+    $this->_ci->load->library('tax_lib');
+    $this->_ci->load->model('Customer');
+    $this->_ci->load->model('Item_taxes');
+    $this->_ci->load->model('Tax');
     foreach ($data['cart'] as $item) {
-      $line = $this->loadItem($item);
+      $line = $this->loadItem($item, $client_id);
       array_push($this->_cart, $line);
     }
   }
 
-  protected function loadItem(&$item) {
+  protected function loadItem(&$item, $client_id) {
     $discount = doubleval($item['discount']);
     $quantity = doubleval($item['quantity']);
     $price = doubleval($item['price']);
@@ -227,6 +235,7 @@ class E_envoice_cr_invoice {
     $discount_amount = $total_amount * ($discount / 100);
     $subtotal = $total_amount - $discount_amount;
     $tax_amount = 0.0;
+    $taxes = $this->getItemTaxes($item, $client_id, $tax_amount);
     $line_total_amount = $subtotal + $tax_amount;
 
     $line = array(
@@ -240,15 +249,80 @@ class E_envoice_cr_invoice {
       'subtotal' => round($subtotal, 5),
       'line_total_amount' => round($line_total_amount, 5),
       'discount' => array(),
-      'tax' => array(),
+      'taxes' => $taxes,
     );
 
-    if ($discount > 0.0) {
+    if ($discount_amount <> 0.0) {
       $line['discount']['amount'] = round($discount_amount, 5);
       $line['discount']['reason'] = 'Discount';
     }
-
+    $this->_invoice['td'] += $discount_amount;
+    $this->_invoice['ti'] += $tax_amount;
     return $line;
+  }
+
+  protected function getItemTaxes(&$item, $client_id, &$total_tax_line) {
+    $customer = $this->_ci->Customer->get_info($customer_id);
+    return $this->getItemAppliedTaxes($item, $customer, $total_tax_line);
+  }
+
+  protected function getItemAppliedTaxes(&$item, &$customer, &$total_tax_line) {
+    $taxes = array();
+    $register_mode = $this->_ci->config->item('default_register_mode');
+    if ($this->_ci->config->item('customer_sales_tax_support') == '1') {
+      $tax_code = $this->_ci->tax_lib->get_applicable_tax_code($register_mode, $customer->city, $customer->state, $customer->sales_tax_code);
+      if ($tax_code != '' && $item['price'] != 0) {
+        $tax_rate = 0.0000;
+        $rounding_code = Rounding_mode::HALF_UP;
+
+        $tax_code_obj = $this->_ci->Tax->get_info($tax_code);
+        $tax_category_id = $item['tax_category_id'];
+
+        if ($tax_category_id != 0) {
+          $tax_rate_info = $this->_ci->Tax->get_rate_info($tax_code, $tax_category_id);
+          if ($tax_rate_info) {
+            $tax_rate = $tax_rate_info->tax_rate;
+            $rounding_code = $tax_rate_info->rounding_code;
+          }
+          else {
+            $tax_rate = $tax_code_obj->tax_rate;
+            $rounding_code = $tax_code_obj->rounding_code;
+          }
+        }
+
+        if ($tax_category_id != 0) {
+          $tax_rate_info = $this->_ci->Tax->get_rate_info($tax_code, $tax_category_id);
+          $tax_rate = $tax_rate_info->tax_rate;
+          $rounding_code = $tax_rate_info->rounding_code;
+          $tax_group_sequence = $tax_rate_info->tax_group_sequence;
+          $tax_category = $tax_rate_info->tax_category;
+        }
+        else {
+          $tax_rate = $tax_code_obj->tax_rate;
+          $rounding_code = $tax_code_obj->rounding_code;
+          $tax_group_sequence = $tax_code_obj->tax_group_sequence;
+          $tax_category = $tax_code_obj->tax_category;
+        }
+
+        $decimals = tax_decimals();
+
+        // The tax basis should be returned at the currency scale
+        $tax_basis = $this->_ci->sale_lib->get_item_total($item['quantity'], $item['price'], $item['discount'], TRUE);
+        $tax_amount = $this->_ci->tax_lib->get_sales_tax_for_amount($tax_basis, $tax_rate, $rounding_code, $decimals);
+
+
+        if ($tax_amount <> 0) {
+          $tax_line = array(
+            'code' => $tax_code,
+            'rate' => round($tax_rate, 2),
+            'amount' => round($tax_amount, 5),
+          );
+          array_push($taxes, $tax_line);
+          $total_tax_line += $tax_amount;
+        }
+      }
+    }
+    return $taxes;
   }
 
 }

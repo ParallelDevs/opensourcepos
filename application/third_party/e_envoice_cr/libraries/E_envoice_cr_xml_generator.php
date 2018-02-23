@@ -195,8 +195,8 @@ class E_envoice_cr_xml_generator {
     }
     
     $children[] = $this->getSimpleTag('SubTotal', $item['subtotal']);
-    if(!empty($item['tax'])){
-      $children[] = $this->getImpuestoTag($item);
+    foreach($item['taxes'] as $tax){
+      $children[] = $this->getImpuestoTag($tax);
     }
     
     $children[] = $this->getSimpleTag('MontoTotalLinea', $item['line_total_amount']);
@@ -218,11 +218,11 @@ class E_envoice_cr_xml_generator {
     return $codeTag;
   }
 
-  protected function getImpuestoTag(&$item) {
+  protected function getImpuestoTag(&$tax) {
     $taxTag = $this->_xml->createElement('Impuesto');
-    $code = $this->getSimpleTag('Codigo', $item['tax']['code']);
-    $cost = $this->getSimpleTag('Tarifa', $item['tax']['cost']);
-    $amount = $this->getSimpleTag('Monto', $item['tax']['amount']);
+    $code = $this->getSimpleTag('Codigo', $tax['code']);
+    $cost = $this->getSimpleTag('Tarifa', $tax['rate']);
+    $amount = $this->getSimpleTag('Monto', $tax['amount']);
 
     $taxTag->appendChild($code);
     $taxTag->appendChild($cost);
