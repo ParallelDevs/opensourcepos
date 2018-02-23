@@ -39,8 +39,9 @@ class Settings extends Secure_Controller {
       'e_envoice_cr_password' => $this->input->post('password'),
       'e_envoice_cr_id_type' => $this->input->post('id_type'),
       'e_envoice_cr_id' => $this->input->post('company_id'),
-      'e_envoice_cr_name' => $this->input->post('company_name'),
-      'e_envoice_cr_currency_code' => $this->input->post('currency_code'),
+      'e_envoice_cr_commercial_name' => $this->input->post('company_name'),
+      'e_envoice_cr_resolution_number' => $this->input->post('resolution_number'),
+      'e_envoice_cr_resolution_date' => $this->input->post('resolution_date'),
       'e_envoice_cr_cert_password' => $this->input->post('cert_password')
     ];
 
@@ -67,7 +68,8 @@ class Settings extends Secure_Controller {
     // load upload library
     $config = array('upload_path' => './uploads/certs/',
       'allowed_types' => 'p12',
-      'file_name'=>'e_envoice_cert',
+      'file_name' => 'e_envoice_cert',
+      'overwrite' => true,
     );
     $this->load->library('upload', $config);
     $this->upload->do_upload('cert');
