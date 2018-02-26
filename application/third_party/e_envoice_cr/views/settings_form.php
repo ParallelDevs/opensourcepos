@@ -15,7 +15,7 @@ echo form_open("e_envoice_cr/save_settings", array(
           'name' => 'environment',
           'id' => 'environment',
           'class' => 'form-control input-sm',
-            ),$environments,array($this->config->item('e_envoice_cr_env')))
+            ), $environments, array($this->config->item('e_envoice_cr_env')))
         ?>
       </div>
     </div>
@@ -60,7 +60,7 @@ echo form_open("e_envoice_cr/save_settings", array(
           'name' => 'id_type',
           'id' => 'id_type',
           'class' => 'form-control input-sm',
-            ),$id_types, array($this->config->item('e_envoice_cr_id_type')))
+            ), $id_types, array($this->config->item('e_envoice_cr_id_type')))
         ?>
       </div>
     </div>
@@ -92,6 +92,21 @@ echo form_open("e_envoice_cr/save_settings", array(
           'class' => 'form-control input-sm',
           'value' => $this->config->item('e_envoice_cr_commercial_name')));
         ?>
+      </div>
+    </div>
+  </div>
+  <div class="form-group form-group-sm">
+    <?php echo form_label($this->lang->line('e_envoice_cr_address'), '', array('class' => 'control-label col-xs-2 ')); ?>
+    <div class="col-xs-6">
+      <div class="input-group">
+        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-cloud"></span></span>
+        <?php
+        echo form_dropdown(array(
+          'name' => 'province',
+          'id' => 'province',
+          'class' => 'form-control input-sm',
+            ), $provinces, array($this->config->item('e_envoice_cr_address_province')))
+        ?>        
       </div>
     </div>
   </div>
@@ -158,3 +173,29 @@ echo form_open("e_envoice_cr/save_settings", array(
   ?>
 </fieldset>
 <?php echo form_close(); ?>
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('select[name="province"]').on('change', function () {
+      var provinceId = $(this).val();
+
+      if (stateID) {
+        $.ajax({
+          url: '/address/canton' + provinceId,
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+            $('select[name="canton"]').empty();
+            $.each(data, function (key, value) {
+              $('select[name="canton"]').append('<option value="' + value.code + '">' + value.name + '</option>');
+            });
+          }
+        });
+
+      } else {
+        $('select[name="canton"]').empty();
+      }
+    });
+
+  });
+
+</script>

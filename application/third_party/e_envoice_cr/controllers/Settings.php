@@ -32,6 +32,16 @@ class Settings extends Secure_Controller {
     return $options;
   }
 
+  protected function get_provinces() {
+    $options = ["" => "Select one..."];
+    $this->load->model('Eenvoicecrprovince');
+    $result = $this->Eenvoicecrprovince->get_all();
+    foreach ($result->result() as $list) {
+      $options[$list->code] = $list->name;
+    }
+    return $options;
+  }
+
   protected function get_settings() {
     $batch_save_data = [
       'e_envoice_cr_env' => $this->input->post('environment'),
@@ -42,7 +52,8 @@ class Settings extends Secure_Controller {
       'e_envoice_cr_commercial_name' => $this->input->post('company_name'),
       'e_envoice_cr_resolution_number' => $this->input->post('resolution_number'),
       'e_envoice_cr_resolution_date' => $this->input->post('resolution_date'),
-      'e_envoice_cr_cert_password' => $this->input->post('cert_password')
+      'e_envoice_cr_cert_password' => $this->input->post('cert_password'),
+      'e_envoice_cr_address_province'=> $this->input->post('province'),
     ];
 
     if (empty($batch_save_data['e_envoice_cr_password'])) {

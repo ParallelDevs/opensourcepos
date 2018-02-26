@@ -21,7 +21,8 @@ class E_envoice_cr extends Settings {
   public function index() {
     $data['environments'] = $this->get_environments();
     $data['id_types'] = $this->get_id_types();
-
+    $data['provinces'] = $this->get_provinces();
+    
     $this->load->view('settings', $data);
   }
 
