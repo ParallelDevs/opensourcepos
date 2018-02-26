@@ -18,6 +18,19 @@ class Settings extends Secure_Controller {
     $this->load->language('e_envoice_cr');
   }
 
+  public function address_canton($province_id) {
+    $options = [];
+    $this->load->model('Eenvoicecrcanton');
+    $result = $this->Eenvoicecrcanton->get_all($province_id);
+    if ($result) {
+      foreach ($result->result() as $list) {
+        $option = ['code' => $list->code, 'name' => $list->name];
+        array_push($options, $option);
+      }
+    }
+    echo json_encode($options);
+  }
+
   protected function get_id_types() {
     $prompt = ["" => "Select one..."];
     $id_types = Hacienda_constants::get_id_types();
@@ -42,6 +55,21 @@ class Settings extends Secure_Controller {
     return $options;
   }
 
+  protected function get_cantones($province = '') {
+    $options = [];
+    $this->load->model('Eenvoicecrcanton');
+    if (!empty($province)) {
+      $options += ["" => "Select one..."];
+      $result = $this->Eenvoicecrcanton->get_all($province);
+      if ($result) {
+        foreach ($result->result() as $list) {
+          $options[$list->code] = $list->name;
+        }
+      }
+    }
+    return $options;
+  }
+
   protected function get_settings() {
     $batch_save_data = [
       'e_envoice_cr_env' => $this->input->post('environment'),
@@ -53,7 +81,8 @@ class Settings extends Secure_Controller {
       'e_envoice_cr_resolution_number' => $this->input->post('resolution_number'),
       'e_envoice_cr_resolution_date' => $this->input->post('resolution_date'),
       'e_envoice_cr_cert_password' => $this->input->post('cert_password'),
-      'e_envoice_cr_address_province'=> $this->input->post('province'),
+      'e_envoice_cr_address_province' => $this->input->post('province'),
+      'e_envoice_cr_address_canton' => $this->input->post(canton),
     ];
 
     if (empty($batch_save_data['e_envoice_cr_password'])) {

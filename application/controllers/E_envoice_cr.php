@@ -22,7 +22,8 @@ class E_envoice_cr extends Settings {
     $data['environments'] = $this->get_environments();
     $data['id_types'] = $this->get_id_types();
     $data['provinces'] = $this->get_provinces();
-    
+    $data['cantones'] = $this->get_cantones($this->Appconfig->get('e_envoice_cr_address_province'));
+
     $this->load->view('settings', $data);
   }
 

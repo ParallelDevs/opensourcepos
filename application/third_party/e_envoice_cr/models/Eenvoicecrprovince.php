@@ -12,7 +12,7 @@ class Eenvoicecrprovince extends CI_Model {
 
   public function exists($code) {
     $this->db->from('eenvoicecr_province');
-    $this->db->where('eenvoicecr_province.code', $code);
+    $this->db->where('eenvoicecr_province', array('code'=>$code));
 
     return ($this->db->get()->num_rows() == 1);
   }
@@ -37,10 +37,10 @@ class Eenvoicecrprovince extends CI_Model {
     return '';
   }
 
-  public function save($code, $value) {
+  public function save($code, $name) {
     $data = array(
       'code' => $code,
-      'name' => $value
+      'name' => $name
     );
 
     if (!$this->exists($code)) {

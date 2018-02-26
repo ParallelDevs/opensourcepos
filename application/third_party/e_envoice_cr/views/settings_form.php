@@ -106,7 +106,14 @@ echo form_open("e_envoice_cr/save_settings", array(
           'id' => 'province',
           'class' => 'form-control input-sm',
             ), $provinces, array($this->config->item('e_envoice_cr_address_province')))
-        ?>        
+        ?>
+        <?php
+        echo form_dropdown(array(
+          'name' => 'canton',
+          'id' => 'canton',
+          'class' => 'form-control input-sm',
+            ), $cantones, array($this->config->item('e_envoice_cr_address_canton')))
+        ?>
       </div>
     </div>
   </div>
@@ -178,9 +185,9 @@ echo form_open("e_envoice_cr/save_settings", array(
     $('select[name="province"]').on('change', function () {
       var provinceId = $(this).val();
 
-      if (stateID) {
+      if (provinceId) {
         $.ajax({
-          url: '/address/canton' + provinceId,
+          url: '/e_envoice_cr/address_canton/' + provinceId,
           type: "GET",
           dataType: "json",
           success: function (data) {
