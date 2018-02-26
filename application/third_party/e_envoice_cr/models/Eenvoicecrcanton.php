@@ -6,6 +6,7 @@
  * @author pdev
  */
 class Eenvoicecrcanton extends CI_Model {
+
   public function exists($province_code, $code) {
     $this->db->from('eenvoicecr_canton');
     $this->db->where(array('province_code' => $province_code, 'code' => $code));
@@ -49,6 +50,7 @@ class Eenvoicecrcanton extends CI_Model {
 
     $this->db->where(array('province_code' => $province_code, 'code' => $code));
 
-    return $this->db->update('ospos_eenvoicecr_canton', $data);
+    return $this->db->update('eenvoicecr_canton', $data);
   }
+
 }

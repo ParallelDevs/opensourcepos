@@ -114,6 +114,13 @@ echo form_open("e_envoice_cr/save_settings", array(
           'class' => 'form-control input-sm',
             ), $cantones, array($this->config->item('e_envoice_cr_address_canton')))
         ?>
+        <?php
+        echo form_dropdown(array(
+          'name' => 'distrit',
+          'id' => 'distrit',
+          'class' => 'form-control input-sm',
+            ), $distrits, array($this->config->item('e_envoice_cr_address_distrit')))
+        ?>
       </div>
     </div>
   </div>
@@ -183,13 +190,14 @@ echo form_open("e_envoice_cr/save_settings", array(
 <script type="text/javascript">
   $(document).ready(function () {
     $('select[name="province"]').on('change', function () {
-      var provinceId = $(this).val();
+      var provinceCode = $(this).val();
 
-      if (provinceId) {
+      if (provinceCode) {
         $.ajax({
-          url: '/e_envoice_cr/address_canton/' + provinceId,
+          url: '/e_envoice_cr/address_canton',
           type: "GET",
           dataType: "json",
+          data: {'province_code': provinceCode},
           success: function (data) {
             $('select[name="canton"]').empty();
             $.each(data, function (key, value) {
@@ -200,6 +208,32 @@ echo form_open("e_envoice_cr/save_settings", array(
 
       } else {
         $('select[name="canton"]').empty();
+      }
+    });
+
+    $('select[name="canton"]').on('change', function () {
+      var provinceId = $('select[name="province"]').val();
+      var cantonId = $(this).val();
+
+      if (provinceId && cantonId) {
+        $.ajax({
+          url: '/e_envoice_cr/address_distrit',
+          type: "GET",
+          dataType: "json",
+          data: {
+            'province_code': provinceId,
+            'canton_code': cantonId
+          },
+          success: function (data) {
+            $('select[name="distrit"]').empty();
+            $.each(data, function (key, value) {
+              $('select[name="distrit"]').append('<option value="' + value.code + '">' + value.name + '</option>');
+            });
+          }
+        });
+
+      } else {
+        $('select[name="distrit"]').empty();
       }
     });
 

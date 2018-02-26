@@ -18,10 +18,26 @@ class Settings extends Secure_Controller {
     $this->load->language('e_envoice_cr');
   }
 
-  public function address_canton($province_id) {
+  public function address_canton() {
+    $province_code = $this->input->get('province_code');
     $options = [];
     $this->load->model('Eenvoicecrcanton');
-    $result = $this->Eenvoicecrcanton->get_all($province_id);
+    $result = $this->Eenvoicecrcanton->get_all($province_code);
+    if ($result) {
+      foreach ($result->result() as $list) {
+        $option = ['code' => $list->code, 'name' => $list->name];
+        array_push($options, $option);
+      }
+    }
+    echo json_encode($options);
+  }
+
+  public function address_distrit() {
+    $province_code = $this->input->get('province_code');
+    $canton_code = $this->input->get('canton_code');
+    $options = [];
+    $this->load->model('Eenvoicecrdistrit');
+    $result = $this->Eenvoicecrdistrit->get_all($province_code, $canton_code);
     if ($result) {
       foreach ($result->result() as $list) {
         $option = ['code' => $list->code, 'name' => $list->name];
@@ -55,12 +71,31 @@ class Settings extends Secure_Controller {
     return $options;
   }
 
-  protected function get_cantones($province = '') {
+  protected function get_cantones() {
     $options = [];
     $this->load->model('Eenvoicecrcanton');
+    $province = $this->Appconfig->get('e_envoice_cr_address_province');
     if (!empty($province)) {
       $options += ["" => "Select one..."];
       $result = $this->Eenvoicecrcanton->get_all($province);
+      if ($result) {
+        foreach ($result->result() as $list) {
+          $options[$list->code] = $list->name;
+        }
+      }
+    }
+    return $options;
+  }
+
+  protected function get_distrits($province = '') {
+    $options = [];
+    $this->load->model('Eenvoicecrcanton');
+    $province = $this->Appconfig->get('e_envoice_cr_address_province');
+    $canton = $this->Appconfig->get('e_envoice_cr_address_canton');
+    if (!empty($province) && !empty($canton)) {
+      $options += ["" => "Select one..."];
+      $this->load->model('Eenvoicecrdistrit');
+      $result = $this->Eenvoicecrdistrit->get_all($province, $canton);
       if ($result) {
         foreach ($result->result() as $list) {
           $options[$list->code] = $list->name;
@@ -82,7 +117,8 @@ class Settings extends Secure_Controller {
       'e_envoice_cr_resolution_date' => $this->input->post('resolution_date'),
       'e_envoice_cr_cert_password' => $this->input->post('cert_password'),
       'e_envoice_cr_address_province' => $this->input->post('province'),
-      'e_envoice_cr_address_canton' => $this->input->post(canton),
+      'e_envoice_cr_address_canton' => $this->input->post('canton'),
+      'e_envoice_cr_address_distrit' => $this->input->post('distrit'),
     ];
 
     if (empty($batch_save_data['e_envoice_cr_password'])) {
