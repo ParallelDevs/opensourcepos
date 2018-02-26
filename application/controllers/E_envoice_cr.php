@@ -24,6 +24,7 @@ class E_envoice_cr extends Settings {
     $data['provinces'] = $this->get_provinces();
     $data['cantones'] = $this->get_cantones();
     $data['distrits'] = $this->get_distrits();
+    $data['neighborhoods']= $this->get_neighborhoods();
 
     $this->load->view('settings', $data);
   }

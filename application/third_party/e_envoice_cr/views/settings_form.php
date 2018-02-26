@@ -121,6 +121,13 @@ echo form_open("e_envoice_cr/save_settings", array(
           'class' => 'form-control input-sm',
             ), $distrits, array($this->config->item('e_envoice_cr_address_distrit')))
         ?>
+        <?php
+        echo form_dropdown(array(
+          'name' => 'neighborhood',
+          'id' => 'neighborhood',
+          'class' => 'form-control input-sm',
+            ), $neighborhoods, array($this->config->item('e_envoice_cr_address_neighborhood')))
+        ?>
       </div>
     </div>
   </div>
@@ -200,6 +207,8 @@ echo form_open("e_envoice_cr/save_settings", array(
           data: {'province_code': provinceCode},
           success: function (data) {
             $('select[name="canton"]').empty();
+            $('select[name="distrit"]').empty();
+            $('select[name="neighborhood"]').empty();
             $.each(data, function (key, value) {
               $('select[name="canton"]').append('<option value="' + value.code + '">' + value.name + '</option>');
             });
@@ -208,6 +217,8 @@ echo form_open("e_envoice_cr/save_settings", array(
 
       } else {
         $('select[name="canton"]').empty();
+        $('select[name="distrit"]').empty();
+        $('select[name="neighborhood"]').empty();
       }
     });
 
@@ -226,6 +237,7 @@ echo form_open("e_envoice_cr/save_settings", array(
           },
           success: function (data) {
             $('select[name="distrit"]').empty();
+            $('select[name="neighborhood"]').empty();
             $.each(data, function (key, value) {
               $('select[name="distrit"]').append('<option value="' + value.code + '">' + value.name + '</option>');
             });
@@ -234,9 +246,37 @@ echo form_open("e_envoice_cr/save_settings", array(
 
       } else {
         $('select[name="distrit"]').empty();
+        $('select[name="neighborhood"]').empty();
       }
     });
 
+    $('select[name="distrit"]').on('change', function () {
+      var provinceId = $('select[name="province"]').val();
+      var cantonId = $('select[name="canton"]').val();
+      var distritId = $(this).val();
+
+      if (provinceId && cantonId && distritId) {
+        $.ajax({
+          url: '/e_envoice_cr/address_neighborhood',
+          type: "GET",
+          dataType: "json",
+          data: {
+            'province_code': provinceId,
+            'canton_code': cantonId,
+            'distrit_code': distritId
+          },
+          success: function (data) {
+            $('select[name="neighborhood"]').empty();
+            $.each(data, function (key, value) {
+              $('select[name="neighborhood"]').append('<option value="' + value.code + '">' + value.name + '</option>');
+            });
+          }
+        });
+
+      } else {
+        $('select[name="neighborhood"]').empty();
+      }
+    });
   });
 
 </script>

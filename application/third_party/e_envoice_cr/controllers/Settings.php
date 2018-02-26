@@ -24,6 +24,7 @@ class Settings extends Secure_Controller {
     $this->load->model('Eenvoicecrcanton');
     $result = $this->Eenvoicecrcanton->get_all($province_code);
     if ($result) {
+      array_push($options, ['code' => "", 'name' => "Select one..."]);
       foreach ($result->result() as $list) {
         $option = ['code' => $list->code, 'name' => $list->name];
         array_push($options, $option);
@@ -39,6 +40,24 @@ class Settings extends Secure_Controller {
     $this->load->model('Eenvoicecrdistrit');
     $result = $this->Eenvoicecrdistrit->get_all($province_code, $canton_code);
     if ($result) {
+      array_push($options, ['code' => "", 'name' => "Select one..."]);
+      foreach ($result->result() as $list) {
+        $option = ['code' => $list->code, 'name' => $list->name];
+        array_push($options, $option);
+      }
+    }
+    echo json_encode($options);
+  }
+
+  public function address_neighborhood() {
+    $province_code = $this->input->get('province_code');
+    $canton_code = $this->input->get('canton_code');
+    $distrit_code = $this->input->get('distrit_code');
+    $options = [];
+    $this->load->model('Eenvoicecrneighborhood');
+    $result = $this->Eenvoicecrneighborhood->get_all($province_code, $canton_code, $distrit_code);
+    if ($result) {
+      array_push($options, ['code' => "", 'name' => "Select one..."]);
       foreach ($result->result() as $list) {
         $option = ['code' => $list->code, 'name' => $list->name];
         array_push($options, $option);
@@ -62,7 +81,7 @@ class Settings extends Secure_Controller {
   }
 
   protected function get_provinces() {
-    $options = ["" => "Select one..."];
+    $options = ["" => "-Province-"];
     $this->load->model('Eenvoicecrprovince');
     $result = $this->Eenvoicecrprovince->get_all();
     foreach ($result->result() as $list) {
@@ -72,11 +91,10 @@ class Settings extends Secure_Controller {
   }
 
   protected function get_cantones() {
-    $options = [];
-    $this->load->model('Eenvoicecrcanton');
+    $options = ["" => "-Canton-"];
     $province = $this->Appconfig->get('e_envoice_cr_address_province');
-    if (!empty($province)) {
-      $options += ["" => "Select one..."];
+    if (!empty($province)) {      
+      $this->load->model('Eenvoicecrcanton');
       $result = $this->Eenvoicecrcanton->get_all($province);
       if ($result) {
         foreach ($result->result() as $list) {
@@ -87,15 +105,30 @@ class Settings extends Secure_Controller {
     return $options;
   }
 
-  protected function get_distrits($province = '') {
-    $options = [];
-    $this->load->model('Eenvoicecrcanton');
+  protected function get_distrits() {
+    $options = ["" => "-Distrit-"];
     $province = $this->Appconfig->get('e_envoice_cr_address_province');
     $canton = $this->Appconfig->get('e_envoice_cr_address_canton');
-    if (!empty($province) && !empty($canton)) {
-      $options += ["" => "Select one..."];
+    if (!empty($province) && !empty($canton)) {      
       $this->load->model('Eenvoicecrdistrit');
       $result = $this->Eenvoicecrdistrit->get_all($province, $canton);
+      if ($result) {
+        foreach ($result->result() as $list) {
+          $options[$list->code] = $list->name;
+        }
+      }
+    }
+    return $options;
+  }
+
+  protected function get_neighborhoods() {
+    $options = ["" => "-Neighborhood-"];
+    $province = $this->Appconfig->get('e_envoice_cr_address_province');
+    $canton = $this->Appconfig->get('e_envoice_cr_address_canton');
+    $distrit = $this->Appconfig->get('e_envoice_cr_address_distrit');
+    if (!empty($province) && !empty($canton) && !empty($distrit)) {      
+      $this->load->model('Eenvoicecrneighborhood');
+      $result = $this->Eenvoicecrneighborhood->get_all($province, $canton, $distrit);
       if ($result) {
         foreach ($result->result() as $list) {
           $options[$list->code] = $list->name;
@@ -119,6 +152,7 @@ class Settings extends Secure_Controller {
       'e_envoice_cr_address_province' => $this->input->post('province'),
       'e_envoice_cr_address_canton' => $this->input->post('canton'),
       'e_envoice_cr_address_distrit' => $this->input->post('distrit'),
+      'e_envoice_cr_address_neighborhood' => $this->input->post('neighborhood'),
     ];
 
     if (empty($batch_save_data['e_envoice_cr_password'])) {
