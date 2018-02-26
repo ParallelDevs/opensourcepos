@@ -17,3 +17,11 @@ INSERT INTO `ospos_app_config` (`key`, `value`) VALUES
 ('e_envoice_cr_cert_password', ''),
 ('e_envoice_cr_resolution_number',''),
 ('e_envoice_cr_resolution_date','');
+
+INSERT INTO `ospos_app_config` (`key`, `value`) VALUES
+('e_envoice_cr_address_province', ''),
+('e_envoice_cr_address_canton', ''),
+('e_envoice_cr_address_distrit', ''),
+('e_envoice_cr_address_neighborhood', ''),
+('e_envoice_cr_address_other','');
+
