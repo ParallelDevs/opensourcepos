@@ -1,33 +1,33 @@
 CREATE TABLE `ospos_eenvoicecr_province` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `code` int(2) DEFAULT NULL,
+  `code` varchar(2) NOT NULL,
   `name` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `ospos_eenvoicecr_canton` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `province_code` int(1) unsigned zerofill NOT NULL,
-  `code` int(2) unsigned zerofill NOT NULL,
+  `province_code` varchar(2) NOT NULL,
+  `code` varchar(2) NOT NULL,
   `name` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `ospos_eenvoicecr_distrit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `province_code` int(1) unsigned zerofill DEFAULT NULL,
-  `canton_code` int(2) unsigned zerofill DEFAULT NULL,
-  `code` int(2) unsigned zerofill DEFAULT NULL,
+  `province_code` varchar(2) NOT NULL,
+  `canton_code` varchar(2) NOT NULL,
+  `code` varchar(2) NOT NULL,
   `name` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=476 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `ospos_eenvoicecr_neighborhood` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `province_code` int(1) unsigned zerofill DEFAULT NULL,
-  `canton_code` int(2) unsigned zerofill DEFAULT NULL,
-  `distrit_code` int(2) unsigned zerofill DEFAULT NULL,
-  `code` int(2) unsigned zerofill DEFAULT NULL,
+  `province_code` varchar(2) NOT NULL,
+  `canton_code` varchar(2) NOT NULL,
+  `distrit_code` varchar(2) NOT NULL,
+  `code` varchar(2) NOT NULL,
   `name` varchar(80) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6604 DEFAULT CHARSET=latin1;
