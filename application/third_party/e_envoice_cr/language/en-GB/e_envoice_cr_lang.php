@@ -10,4 +10,10 @@ $lang["e_envoice_cr_cert"] = "Certificate File";
 $lang["e_envoice_cr_cert_password"] = "Certificate Password";
 $lang["e_envoice_cr_resolution_number"] = "Resolution Number";
 $lang["e_envoice_cr_resolution_date"] = "Resolution Date";
+$lang["e_envoice_cr_address"] = "Costarrican Address";
+$lang["e_envoice_cr_address_province"] = "Province";
+$lang["e_envoice_cr_address_canton"] = "Canton";
+$lang["e_envoice_cr_address_distrit"] = "Distrit";
+$lang["e_envoice_cr_address_neighborhood"] = "Neighborhood";
+$lang["e_envoice_cr_address_other"] = "Other";
 

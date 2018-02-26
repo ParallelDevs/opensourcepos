@@ -99,36 +99,61 @@ echo form_open("e_envoice_cr/save_settings", array(
     <?php echo form_label($this->lang->line('e_envoice_cr_address'), '', array('class' => 'control-label col-xs-2 ')); ?>
     <div class="col-xs-6">
       <div class="input-group">
-        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-cloud"></span></span>
-        <?php
-        echo form_dropdown(array(
-          'name' => 'province',
-          'id' => 'province',
-          'class' => 'form-control input-sm',
-            ), $provinces, array($this->config->item('e_envoice_cr_address_province')))
-        ?>
-        <?php
-        echo form_dropdown(array(
-          'name' => 'canton',
-          'id' => 'canton',
-          'class' => 'form-control input-sm',
-            ), $cantones, array($this->config->item('e_envoice_cr_address_canton')))
-        ?>
-        <?php
-        echo form_dropdown(array(
-          'name' => 'distrit',
-          'id' => 'distrit',
-          'class' => 'form-control input-sm',
-            ), $distrits, array($this->config->item('e_envoice_cr_address_distrit')))
-        ?>
-        <?php
-        echo form_dropdown(array(
-          'name' => 'neighborhood',
-          'id' => 'neighborhood',
-          'class' => 'form-control input-sm',
-            ), $neighborhoods, array($this->config->item('e_envoice_cr_address_neighborhood')))
-        ?>
+        <span class="input-group-addon input-sm"><span class="glyphicon glyphicon-map-marker"></span></span>
+        <?php echo form_label($this->lang->line('e_envoice_cr_address_province'), 'province', array('class' => 'control-label col-xs-2 ')); ?>
+        <div class="col-xs-10">
+          <?php
+          echo form_dropdown(array(
+            'name' => 'province',
+            'id' => 'province',
+            'class' => 'form-control input-sm',
+              ), $provinces, array($this->config->item('e_envoice_cr_address_province')))
+          ?>
+        </div>
+        <?php echo form_label($this->lang->line('e_envoice_cr_address_canton'), 'canton', array('class' => 'control-label col-xs-2 ')); ?>
+        <div class="col-xs-10">
+          <?php
+          echo form_dropdown(array(
+            'name' => 'canton',
+            'id' => 'canton',
+            'class' => 'form-control input-sm',
+              ), $cantones, array($this->config->item('e_envoice_cr_address_canton')))
+          ?>
+        </div>
+        <?php echo form_label($this->lang->line('e_envoice_cr_address_distrit'), 'distrit', array('class' => 'control-label col-xs-2 ')); ?>
+        <div class="col-xs-10">
+          <?php
+          echo form_dropdown(array(
+            'name' => 'distrit',
+            'id' => 'distrit',
+            'class' => 'form-control input-sm',
+              ), $distrits, array($this->config->item('e_envoice_cr_address_distrit')))
+          ?>
+        </div>
+        <?php echo form_label($this->lang->line('e_envoice_cr_address_neighborhood'), 'neighborhood', array('class' => 'control-label col-xs-2 ')); ?>
+        <div class="col-xs-10">
+          <?php
+          echo form_dropdown(array(
+            'name' => 'neighborhood',
+            'id' => 'neighborhood',
+            'class' => 'form-control input-sm',
+              ), $neighborhoods, array($this->config->item('e_envoice_cr_address_neighborhood')))
+          ?>
+        </div>
+        <div class="form-group form-group-sm">
+          <?php echo form_label($this->lang->line('e_envoice_cr_address_other'), 'other_signs', array('class' => 'control-label col-xs-2 ')); ?>
+          <div class="col-xs-10">
+            <?php
+            echo form_textarea(array(
+              'name' => 'other_signs',
+              'id' => 'other_signs',
+              'class' => 'form-control input-sm required',
+              'value' => $this->config->item('e_envoice_cr_address_other')));
+            ?>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
   <div class="form-group form-group-sm">

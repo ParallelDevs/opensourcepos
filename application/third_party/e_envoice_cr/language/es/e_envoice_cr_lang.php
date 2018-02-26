@@ -10,4 +10,10 @@ $lang["e_envoice_cr_cert"] = "Certificado";
 $lang["e_envoice_cr_cert_password"] = "Contraseña Certificado";
 $lang["e_envoice_cr_resolution_number"] = "Número de Resolución";
 $lang["e_envoice_cr_resolution_date"] = "Fecha de Resolución";
+$lang["e_envoice_cr_address"] = "Dirección";
+$lang["e_envoice_cr_address_province"] = "Provincia";
+$lang["e_envoice_cr_address_canton"] = "Cantón";
+$lang["e_envoice_cr_address_distrit"] = "Distrito";
+$lang["e_envoice_cr_address_neighborhood"] = "Barrio";
+$lang["e_envoice_cr_address_other"] = "Otras Señas";
 

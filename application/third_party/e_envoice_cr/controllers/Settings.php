@@ -15,7 +15,8 @@ class Settings extends Secure_Controller {
   public function __construct() {
     parent::__construct('config');
     $this->load->add_package_path(APPPATH . 'third_party/e_envoice_cr/');
-    $this->load->language('e_envoice_cr');
+    $lang_code = $this->Appconfig->get('language_code');
+    $this->load->language('e_envoice_cr',$lang_code);
   }
 
   public function address_canton() {
