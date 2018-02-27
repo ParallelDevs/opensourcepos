@@ -16,7 +16,7 @@ class Settings extends Secure_Controller {
     parent::__construct('config');
     $this->load->add_package_path(APPPATH . 'third_party/e_envoice_cr/');
     $lang_code = $this->Appconfig->get('language_code');
-    $this->load->language('e_envoice_cr',$lang_code);
+    $this->load->language('e_envoice_cr', $lang_code);
   }
 
   public function address_canton() {
@@ -94,7 +94,7 @@ class Settings extends Secure_Controller {
   protected function get_cantones() {
     $options = ["" => "-Canton-"];
     $province = $this->Appconfig->get('e_envoice_cr_address_province');
-    if (!empty($province)) {      
+    if (!empty($province)) {
       $this->load->model('Eenvoicecrcanton');
       $result = $this->Eenvoicecrcanton->get_all($province);
       if ($result) {
@@ -110,7 +110,7 @@ class Settings extends Secure_Controller {
     $options = ["" => "-Distrit-"];
     $province = $this->Appconfig->get('e_envoice_cr_address_province');
     $canton = $this->Appconfig->get('e_envoice_cr_address_canton');
-    if (!empty($province) && !empty($canton)) {      
+    if (!empty($province) && !empty($canton)) {
       $this->load->model('Eenvoicecrdistrit');
       $result = $this->Eenvoicecrdistrit->get_all($province, $canton);
       if ($result) {
@@ -127,7 +127,7 @@ class Settings extends Secure_Controller {
     $province = $this->Appconfig->get('e_envoice_cr_address_province');
     $canton = $this->Appconfig->get('e_envoice_cr_address_canton');
     $distrit = $this->Appconfig->get('e_envoice_cr_address_distrit');
-    if (!empty($province) && !empty($canton) && !empty($distrit)) {      
+    if (!empty($province) && !empty($canton) && !empty($distrit)) {
       $this->load->model('Eenvoicecrneighborhood');
       $result = $this->Eenvoicecrneighborhood->get_all($province, $canton, $distrit);
       if ($result) {
@@ -154,6 +154,7 @@ class Settings extends Secure_Controller {
       'e_envoice_cr_address_canton' => $this->input->post('canton'),
       'e_envoice_cr_address_distrit' => $this->input->post('distrit'),
       'e_envoice_cr_address_neighborhood' => $this->input->post('neighborhood'),
+      'e_envoice_cr_address_other' => $this->input->post('other_signs'),
     ];
 
     if (empty($batch_save_data['e_envoice_cr_password'])) {
