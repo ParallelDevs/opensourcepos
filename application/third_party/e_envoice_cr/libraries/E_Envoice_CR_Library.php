@@ -43,6 +43,7 @@ class E_Envoice_CR_Library {
     require_once APPPATH.'third_party/e_envoice_cr/libraries/'.$class.'.php';
     $xml_generator = new $class ($document_key);
     $xml_generator->generateDocumentXML($general_data, $client, $emitter, $rows);
+    $this->_ci->e_envoice_cr_mapper->increaseDocumentNumber();
   }
 
 }

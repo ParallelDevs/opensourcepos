@@ -75,13 +75,46 @@ class E_envoice_cr_mapper {
     return $this->_doc_key;
   }
 
+  public function increaseDocumentNumber() {
+    $clean_counter = ltrim($this->_doc_number, '0');
+    $counter = intval($clean_counter);
+    $counter++;
+    $string_counter = (string) $counter;
+    $sub_counter = strlen($string_counter) > 10 ? substr($string_counter, -10) : $string_counter;
+    $new_counter = intval($sub_counter);
+    if (0 === $new_counter) {
+      $new_counter = 1;
+    }
+
+    $new_number = format_invoice_number($new_counter, 10);
+    switch ($this->_doc_type) {
+      case Hacienda_constants::DOCUMENT_TYPE_FE:
+        $key = 'e_envoice_cr_consecutive_fe';
+        break;
+      case Hacienda_constants::DOCUMENT_TYPE_CODE_TE:
+        $key = 'e_envoice_cr_consecutive_te';
+        break;
+      case Hacienda_constants::DOCUMENT_TYPE_CODE_NC:
+        $key = 'e_envoice_cr_consecutive_nc';
+        break;
+      case Hacienda_constants::DOCUMENT_TYPE_CODE_ND:
+        $key = 'e_envoice_cr_consecutive_nd';
+        break;
+      default:
+        $key = '';
+        break;
+    }
+
+    $this->_ci->Appconfig->save($key, $new_number);
+  }
+
   protected function loadDocumentData(&$data) {
     $this->_document['consecutive'] = $this->_doc_consecutive;
     $this->_document['key'] = $this->_doc_key;
     $this->_document['date'] = $this->generateFechaEmision($data);
     $this->_document['condition'] = $this->getCondicionVenta($data);
     $this->_document['pay_types'] = $this->getMedioPago($data);
-    $this->_document['document_code'] = Hacienda_constants::get_code_by_document_type($this->_doc_type);    
+    $this->_document['document_code'] = Hacienda_constants::get_code_by_document_type($this->_doc_type);
     $this->_document['resolution'] = $this->getNormativa();
     $this->_document['others'] = $this->getOtros($data);
 
