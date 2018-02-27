@@ -25,3 +25,9 @@ INSERT INTO `ospos_app_config` (`key`, `value`) VALUES
 ('e_envoice_cr_address_neighborhood', ''),
 ('e_envoice_cr_address_other','');
 
+INSERT INTO `ospos_app_config` (`key`, `value`) VALUES
+('e_envoice_cr_consecutive_fe',''),
+('e_envoice_cr_consecutive_te',''),
+('e_envoice_cr_consecutive_nc',''),
+('e_envoice_cr_consecutive_nd','');
+
