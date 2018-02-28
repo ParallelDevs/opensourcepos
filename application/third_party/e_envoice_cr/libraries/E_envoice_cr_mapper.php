@@ -42,7 +42,7 @@ class E_envoice_cr_mapper {
     $this->_doc_key = $this->generateClave();
     $this->loadDocumentData($data);
     $this->loadEmitterData();
-    $this->loadClientData($data);
+    $this->loadClientData($data, $client_id);
     $this->loadCart($data, $client_id);
     $this->calculateInvoiceSummary();
   }
@@ -119,8 +119,8 @@ class E_envoice_cr_mapper {
     $this->_document['others'] = $this->getOtros($data);
 
     $country_code = $this->_ci->Appconfig->get('country_codes');
-    $data = (new ISO3166())->alpha2($country_code);
-    $this->_document['currency_code'] = $data['currency'][0];
+    $country_data = (new ISO3166())->alpha2($country_code);
+    $this->_document['currency_code'] = $country_data['currency'][0];
     $this->_document['currency_rate'] = 0.0;
     $this->_document['tsg'] = 0.0;
     $this->_document['tse'] = 0.0;
@@ -137,11 +137,11 @@ class E_envoice_cr_mapper {
 
   protected function loadDocumentType($sale_type) {
     switch ($sale_type) {
-      case 1: //SALE_TYPE_INVOICE
+      case SALE_TYPE_INVOICE:
         $this->_doc_type = Hacienda_constants::DOCUMENT_TYPE_FE;
         break;
-      case 0: //SALE_TYPE_POS
-        $this->_doc_type = Hacienda_constants::DOCUMENT_TYPE_CODE_TE;
+      case SALE_TYPE_POS:
+        $this->_doc_type = Hacienda_constants::DOCUMENT_TYPE_TE;
         break;
       default :
         $this->_doc_type = '';
@@ -270,6 +270,8 @@ class E_envoice_cr_mapper {
     $distrit = $this->_ci->Appconfig->get('e_envoice_cr_address_distrit');
     $neighborhood = $this->_ci->Appconfig->get('e_envoice_cr_address_neighborhood');
     $otras_senas = $this->_ci->Appconfig->get('e_envoice_cr_address_other');
+    $phone = $this->_ci->Appconfig->get('phone');
+    $fax = $this->_ci->Appconfig->get('fax');
     if (strlen($otras_senas) > 160) {
       $otras_senas = substr($otras_senas, 0, 160);
     }
@@ -278,8 +280,8 @@ class E_envoice_cr_mapper {
     $this->_emitter['id'] = array('type' => $id_type, 'number' => $id);
     $this->_emitter['commercialName'] = $commercial_name;
     $this->_emitter['email'] = $email;
-    $this->_emitter['phone'] = array();
-    $this->_emitter['fax'] = array();
+    $this->_emitter['phone'] = $this->mapPhoneNumber($phone);
+    $this->_emitter['fax'] = $this->mapPhoneNumber($fax);
     $this->_emitter['location'] = array(
       'prov' => format_document_number($province, 1),
       'cant' => format_document_number($canton, 2),
@@ -289,7 +291,11 @@ class E_envoice_cr_mapper {
     );
   }
 
-  protected function loadClientData(&$data) {
+  protected function loadClientData(&$data, $client_id) {
+    if (-1 == $client_id) {
+      return;
+    }
+
     $name = $data['first_name'] . ' ' . $data['last_name'];
     $commercial_name = strcasecmp($name, $data['customer']) != 0 ? $data['customer'] : '';
     $email = $data['customer_email'];
@@ -480,6 +486,29 @@ class E_envoice_cr_mapper {
     $this->_document['tv'] = $this->_document['tg'] + $this->_document['te'];
     $this->_document['tvn'] = $this->_document['tv'] - $this->_document['td'];
     $this->_document['tc'] = $this->_document['tvn'] + $this->_document['ti'];
+  }
+
+  protected function mapPhoneNumber($phone) {
+    $phone_data = array();
+    $replace = array(' ', '+', '-', '(', ')');
+    $clean_phone = str_replace($replace, '', $phone);
+    $phone_lenght = strlen($clean_phone);
+    switch ($phone_lenght) {
+      case 8:
+        $phone_data = array(
+          'code' => '506',
+          'number' => $clean_phone,
+        );
+        break;
+      case 11:
+        $phone_data = array(
+          'code' => substr($clean_phone, 0, 3),
+          'number' => substr($clean_phone, -8),
+        );
+      default:
+        break;
+    }
+    return $phone_data;
   }
 
 }
