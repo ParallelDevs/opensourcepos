@@ -30,7 +30,7 @@ abstract class E_envoice_cr_document_generator {
     return $this->file;
   }
 
-  abstract public function generateDocumentXML(&$general_data, &$receiver, &$emitter, &$items);
+  abstract public function generateXMLDocument(&$general_data, &$receiver, &$emitter, &$items);
 
   abstract protected function initRootTag();
 

@@ -13,11 +13,11 @@ class E_envoice_cr_FE_generator extends E_envoice_cr_document_generator {
   public function __construct($key) {
     parent::__construct($key);
     $this->type = 'FE';
-    $this->file = get_invoice_dir() . '/' . $this->type . '-' . $this->key . '.xml';
+    $this->file = get_documents_dir() . '/' . $this->type . '/' . $this->key . '.xml';
     $this->initRootTag();
   }
 
-  public function generateDocumentXML(&$general_data, &$receiver, &$emitter, &$items) {
+  public function generateXMLDocument(&$general_data, &$receiver, &$emitter, &$items) {
     $children = array();
     $root = $this->getRootTag();
     $children[] = $this->getSimpleTag('Clave', $general_data['key']);
@@ -39,7 +39,7 @@ class E_envoice_cr_FE_generator extends E_envoice_cr_document_generator {
     foreach ($children as $node) {
       $root->appendChild($node);
     }
-
+    
     $this->xml->appendChild($root);
     $this->xml->save($this->file);
   }

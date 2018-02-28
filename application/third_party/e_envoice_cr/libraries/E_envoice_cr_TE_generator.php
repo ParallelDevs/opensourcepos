@@ -13,11 +13,11 @@ class E_envoice_cr_TE_generator extends E_envoice_cr_document_generator {
   public function __construct($consecutive) {
     parent::__construct($consecutive);
     $this->type = 'TE';
-    $this->file = get_invoice_dir() . '/' . $this->type . '-' . $this->key . '.xml';
+    $this->file = get_documents_dir() . '/' . $this->type . '-' . $this->key . '.xml';
     $this->initRootTag();
   }
   
-  public function generateDocumentXML(&$general_data, &$receiver, &$emitter, &$items) {
+  public function generateXMLDocument(&$general_data, &$receiver, &$emitter, &$items) {
     
   }
 

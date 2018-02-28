@@ -86,7 +86,7 @@ class E_envoice_cr_mapper {
       $new_counter = 1;
     }
 
-    $new_number = format_invoice_number($new_counter, 10);
+    $new_number = format_document_number($new_counter, 10);
     switch ($this->_doc_type) {
       case Hacienda_constants::DOCUMENT_TYPE_FE:
         $key = 'e_envoice_cr_consecutive_fe';
@@ -152,8 +152,8 @@ class E_envoice_cr_mapper {
 
   protected function generateClave() {
     $id = $this->_ci->Appconfig->get('e_envoice_cr_id');
-    $id_user = format_invoice_number($id, 12);
-    $key = generate_invoice_key($this->_doc_consecutive, $this->_secure_code, $id_user);
+    $id_user = format_document_number($id, 12);
+    $key = generate_document_key($this->_doc_consecutive, $this->_secure_code, $id_user);
     return $key;
   }
 
@@ -179,7 +179,7 @@ class E_envoice_cr_mapper {
     $this->_doc_number = $this->_ci->Appconfig->get($key);
 
     if (is_null($this->_doc_number) || empty($this->_doc_number)) {
-      $this->_doc_number = format_invoice_number(1, 10);
+      $this->_doc_number = format_document_number(1, 10);
       $this->_ci->Appconfig->save($key, $this->_doc_number);
     }
   }
@@ -189,7 +189,7 @@ class E_envoice_cr_mapper {
     $terminal = 1;
     $doc_code = Hacienda_constants::get_code_by_document_type($this->_doc_type);
     $doc_number = $this->_doc_number;
-    $consecutive = generate_invoice_consecutive($sucursal, $terminal, $doc_code, $doc_number);
+    $consecutive = generate_document_consecutive($sucursal, $terminal, $doc_code, $doc_number);
     return $consecutive;
   }
 
@@ -197,12 +197,12 @@ class E_envoice_cr_mapper {
     $time = time();
     $s_time = (string) $time;
     $tmp_code = strlen($s_time) > 8 ? substr($s_time, -8) : $s_time;
-    $code = format_invoice_number($tmp_code, 8);
+    $code = format_document_number($tmp_code, 8);
     return $code;
   }
 
   protected function generateFechaEmision(&$data) {
-    $date = format_invoice_date($data['transaction_time']);
+    $date = format_document_date($data['transaction_time']);
     return $date;
   }
 
@@ -282,10 +282,10 @@ class E_envoice_cr_mapper {
     $this->_emitter['phone'] = array();
     $this->_emitter['fax'] = array();
     $this->_emitter['location'] = array(
-      'prov' => format_invoice_number($province, 1),
-      'cant' => format_invoice_number($canton, 2),
-      'dist' => format_invoice_number($distrit, 2),
-      'barr' => format_invoice_number($neighborhood, 2),
+      'prov' => format_document_number($province, 1),
+      'cant' => format_document_number($canton, 2),
+      'dist' => format_document_number($distrit, 2),
+      'barr' => format_document_number($neighborhood, 2),
       'other' => $otras_senas,
     );
   }
