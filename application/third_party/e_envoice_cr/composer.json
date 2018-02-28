@@ -10,7 +10,8 @@
         "ext-xmlwriter": "*",
         "ext-dom": "*",
         "ext-json": "*",
-        "league/iso3166": "^2.1"
+        "league/iso3166": "^2.1",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "authors": [
         {

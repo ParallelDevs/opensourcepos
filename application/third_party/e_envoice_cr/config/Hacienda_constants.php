@@ -17,6 +17,8 @@ class Hacienda_constants {
   const DOCUMENT_TYPE_ND = "ND";
   const ENVIRONMENT_TYPE_PROD = "1";
   const ENVIRONMENT_TYPE_STAG = "2";
+  const API_URL_PROD = 'https://api.comprobanteselectronicos.go.cr/recepcion/v1/';
+  const API_URL_STAG = 'https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/';
   const AUTH_URL_PROD = "https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token";
   const AUTH_URL_STAG = 'https://idp.comprobanteselectronicos.go.cr/auth/realms/rut-stag/protocol/openid-connect/token';
   const AUTH_CLIENT_PROD = "api-prod";
