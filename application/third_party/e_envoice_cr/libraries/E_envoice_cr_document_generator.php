@@ -2,6 +2,8 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+require_once dirname(__DIR__) . '/config/Hacienda_constants.php';
+
 /**
  * Description of E_envoice_cr_document
  *

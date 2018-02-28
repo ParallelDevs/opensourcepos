@@ -24,11 +24,15 @@ class Hacienda_constants {
   const DOCUMENT_TYPE_CODE_FE = '01';
   const DOCUMENT_TYPE_CODE_ND = '02';
   const DOCUMENT_TYPE_CODE_NC = '03';
-  const DOCUMENT_TYPE_CODE_TE = '04';  
+  const DOCUMENT_TYPE_CODE_TE = '04';
   const XMLNS_FE = 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/facturaElectronica';
   const XMLNS_TE = 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/tiqueteElectronico';
   const XMLNS_NC = 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaCreditoElectronica';
   const XMLNS_ND = 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaDebitoElectronica';
+  const TARGET_NAMESPACE_FE = 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/tiqueteElectronico';
+  const TARGET_NAMESPACE_TE = 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/tiqueteElectronico';
+  const TARGET_NAMESPACE_NC = 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaCreditoElectronica';
+  const TARGET_NAMESPACE_ND = 'https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/notaDebitoElectronica';
 
   public static function get_id_types() {
     return [
@@ -44,51 +48,6 @@ class Hacienda_constants {
       self::ENVIRONMENT_TYPE_PROD => "Production",
       self::ENVIRONMENT_TYPE_STAG => "Sandbox",
     ];
-  }
-
-  public static function get_tagname_by_document_type($type) {
-    $tagName = '';
-
-    switch ($type) {
-      case self::DOCUMENT_TYPE_FE:
-        $tagName .= 'FacturaElectronica';
-        break;
-      case self::DOCUMENT_TYPE_TE:
-        $tagName .= 'TiqueteElectronico';
-        break;
-      case self::DOCUMENT_TYPE_NC:
-        $tagName .= 'NotaCreditoElectronica';
-        break;
-      case self::DOCUMENT_TYPE_ND:
-        $tagName .= 'NotaDebitoElectronica';
-        break;
-      default:
-        $tagName .= '';
-        break;
-    }
-    return $tagName;
-  }
-
-  public static function get_xlmns_by_document_type($type) {
-    $xmlns = '';
-    switch ($type) {
-      case self::DOCUMENT_TYPE_FE:
-        $xmlns .= self::XMLNS_FE;
-        break;
-      case self::DOCUMENT_TYPE_TE:
-        $xmlns .= self::XMLNS_TE;
-        break;
-      case self::DOCUMENT_TYPE_NC:
-        $xmlns .= self::XMLNS_NC;
-        break;
-      case self::DOCUMENT_TYPE_ND:
-        $xmlns .= self::XMLNS_ND;
-        break;
-      default:
-        $xmlns .= '';
-        break;
-    }
-    return $xmlns;
   }
 
   public static function get_code_by_document_type($type) {
@@ -112,4 +71,5 @@ class Hacienda_constants {
     }
     return $code;
   }
+
 }

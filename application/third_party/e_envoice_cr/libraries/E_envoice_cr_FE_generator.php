@@ -1,7 +1,7 @@
 <?php
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . 'third_party/e_envoice_cr/libraries/E_envoice_cr_document_generator.php';
+require_once __DIR__  . '/E_envoice_cr_document_generator.php';
 
 /**
  * Description of E_envoice_cr_FE_generator
@@ -47,8 +47,8 @@ class E_envoice_cr_FE_generator extends E_envoice_cr_document_generator {
   protected function initRootTag() {
     $this->root_tag = 'FacturaElectronica';
     $this->root_attributes += [
-      'xmlns' => "https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/facturaElectronica",
-      'targetNamespace' => "https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/facturaElectronica",
+      'xmlns' => Hacienda_constants::XMLNS_FE,
+      'targetNamespace' => Hacienda_constants::TARGET_NAMESPACE_FE,
     ];
   }
 

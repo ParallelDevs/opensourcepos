@@ -1,7 +1,7 @@
 <?php
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . 'third_party/e_envoice_cr/libraries/E_envoice_cr_document_generator.php';
+require_once __DIR__ . '/E_envoice_cr_document_generator.php';
 
 /**
  * Description of E_envoice_cr_TE_generator
@@ -16,7 +16,7 @@ class E_envoice_cr_TE_generator extends E_envoice_cr_document_generator {
     $this->file = get_documents_dir() . '/' . $this->type . '-' . $this->key . '.xml';
     $this->initRootTag();
   }
-  
+
   public function generateXMLDocument(&$general_data, &$receiver, &$emitter, &$items) {
     
   }
@@ -24,8 +24,8 @@ class E_envoice_cr_TE_generator extends E_envoice_cr_document_generator {
   protected function initRootTag() {
     $this->root_tag = 'TiqueteElectronico';
     $this->root_attributes = [
-      'xmlns' => "https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/tiqueteElectronico",
-      'targetNamespace' => "https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/tiqueteElectronico",
+      'xmlns' => Hacienda_constants::XMLNS_TE,
+      'targetNamespace' => Hacienda_constants::TARGET_NAMESPACE_TE,
     ];
   }
 
