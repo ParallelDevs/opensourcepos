@@ -18,10 +18,10 @@ class E_Envoice_CR_Library {
     $this->_ci->load->model('Appconfig');
   }
 
-  public function init_invoice() {
+  public function init_document() {
     $this->_ci->load->helper('invoice');
-    if (!is_invoice_dir_valid()) {
-      create_invoice_dir();
+    if (!is_documents_dir_valid()) {
+      create_documents_dirs();
     }
   }
 
@@ -29,7 +29,7 @@ class E_Envoice_CR_Library {
     $this->_ci->load->library('e_envoice_cr_auth');
     $this->_auth_token = $this->_ci->e_envoice_cr_auth->getLoginToken();
   }
-
+  
   public function generateXml(&$sale_data, $sale_type, $client_id) {
     $this->_ci->load->library('e_envoice_cr_mapper');    
     $this->_ci->e_envoice_cr_mapper->mapSale($sale_data, $sale_type, $client_id);
@@ -38,12 +38,18 @@ class E_Envoice_CR_Library {
     $emitter = $this->_ci->e_envoice_cr_mapper->getEmitterData();
     $rows = $this->_ci->e_envoice_cr_mapper->getCartData();
     $type = $this->_ci->e_envoice_cr_mapper->getDocumentType();
+    create_document_subfolder($type);
     $document_key = $this->_ci->e_envoice_cr_mapper->getDocumentKey();
     $class = 'E_envoice_cr_'.$type.'_generator';
     require_once APPPATH.'third_party/e_envoice_cr/libraries/'.$class.'.php';
     $xml_generator = new $class ($document_key);
-    $xml_generator->generateDocumentXML($general_data, $client, $emitter, $rows);
+    $xml_generator->generateXMLDocument($general_data, $client, $emitter, $rows);
     $this->_ci->e_envoice_cr_mapper->increaseDocumentNumber();
+    
+    $xml_document = $xml_generator->getFile();
+    $this->_ci->load->library('e_envoice_cr_document_signer');
+    $this->_ci->e_envoice_cr_document_signer->signXMLDocument($xml_document);
   }
-
+  
+  
 }
