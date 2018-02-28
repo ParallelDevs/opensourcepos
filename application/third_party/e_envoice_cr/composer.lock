@@ -4,40 +4,38 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "19a06da8cb2d9be7069fd49150741a56",
+    "content-hash": "403b50346ff830ecd19599cc9b09b5a6",
     "packages": [
         {
-            "name": "rinvex/country",
-            "version": "v3.1.0",
+            "name": "league/iso3166",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/rinvex/country.git",
-                "reference": "e32228ef43f26d3b02296be9454f842c52d492f3"
+                "url": "https://github.com/thephpleague/iso3166.git",
+                "reference": "ec7edf7754357db1d0b45fe43c31ceb5f67509c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rinvex/country/zipball/e32228ef43f26d3b02296be9454f842c52d492f3",
-                "reference": "e32228ef43f26d3b02296be9454f842c52d492f3",
+                "url": "https://api.github.com/repos/thephpleague/iso3166/zipball/ec7edf7754357db1d0b45fe43c31ceb5f67509c7",
+                "reference": "ec7edf7754357db1d0b45fe43c31ceb5f67509c7",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0.0"
+                "php": "^5.6 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.4.0"
+                "friendsofphp/php-cs-fixer": "^2.0@dev || ^2.0",
+                "phpunit/phpunit": "^4.6 || ^5.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "2.x-dev"
                 }
             },
             "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
                 "psr-4": {
-                    "Rinvex\\Country\\": "src/"
+                    "League\\ISO3166\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -46,39 +44,21 @@
             ],
             "authors": [
                 {
-                    "name": "Rinvex LLC",
-                    "email": "help@rinvex.com",
-                    "homepage": "https://rinvex.com"
-                },
-                {
-                    "name": "Abdelrahman Omran",
-                    "email": "me@omranic.com",
-                    "homepage": "https://omranic.com",
-                    "role": "Project Lead"
-                },
-                {
-                    "name": "The Generous Laravel Community",
-                    "homepage": "https://github.com/rinvex/country/contributors"
+                    "name": "Rob Bast",
+                    "email": "rob.bast@gmail.com"
                 }
             ],
-            "description": "Rinvex Country is a simple and lightweight package for retrieving country details with flexibility. A whole bunch of data including name, demonym, capital, iso codes, dialling codes, geo data, currencies, flags, emoji, and other attributes for all 250 countries worldwide at your fingertips.",
-            "homepage": "https://rinvex.com",
+            "description": "ISO 3166-1 PHP Library",
+            "homepage": "https://github.com/thephpleague/iso3166",
             "keywords": [
-                "Flexible",
-                "Simple",
+                "3166",
+                "3166-1",
+                "ISO 3166",
                 "countries",
-                "country",
-                "currencies",
-                "demonym",
-                "dialling",
-                "emoji",
-                "flags",
-                "geographic",
-                "languages",
-                "rinvex",
-                "svg"
+                "iso",
+                "library"
             ],
-            "time": "2017-03-07T18:40:20+00:00"
+            "time": "2018-01-02T06:45:36+00:00"
         }
     ],
     "packages-dev": [],

@@ -10,7 +10,7 @@
         "ext-xmlwriter": "*",
         "ext-dom": "*",
         "ext-json": "*",
-        "rinvex/country": "^3.1"
+        "league/iso3166": "^2.1"
     },
     "authors": [
         {

@@ -3,7 +3,7 @@
 require_once dirname(__DIR__) . '/config/Hacienda_constants.php';
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-use Rinvex\Country\Country;
+use League\ISO3166\ISO3166;
 
 /**
  * Description of E_envoice_cr_Invoice
@@ -119,9 +119,8 @@ class E_envoice_cr_mapper {
     $this->_document['others'] = $this->getOtros($data);
 
     $country_code = $this->_ci->Appconfig->get('country_codes');
-    $country = country($country_code);
-    $currency_info = $country->getCurrency();
-    $this->_document['currency_code'] = $currency_info['iso_4217_code'];
+    $data = (new ISO3166())->alpha2($country_code);
+    $this->_document['currency_code'] = $data['currency'][0];
     $this->_document['currency_rate'] = 0.0;
     $this->_document['tsg'] = 0.0;
     $this->_document['tse'] = 0.0;
