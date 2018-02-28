@@ -46,10 +46,10 @@ class E_envoice_cr_auth {
   protected function get_environment_url() {
     $environment = $this->_ci->Appconfig->get('e_envoice_cr_env');
     if ($environment === Hacienda_constants::ENVIRONMENT_TYPE_PROD) {
-      $url = Hacienda_constants::ENVIRONMENT_URL_PROD;
+      $url = Hacienda_constants::AUTH_URL_PROD;
     }
     else {
-      $url = Hacienda_constants::ENVIRONMENT_URL_STAG;
+      $url = Hacienda_constants::AUTH_URL_STAG;
     }
     return $url;
   }
@@ -57,10 +57,10 @@ class E_envoice_cr_auth {
   protected function get_environment_client_id() {
     $environment = $this->_ci->Appconfig->get('e_envoice_cr_env');
     if ($environment === Hacienda_constants::ENVIRONMENT_TYPE_PROD) {
-      $client_id = Hacienda_constants::ENVIRONMENT_CLIENT_PROD;
+      $client_id = Hacienda_constants::AUTH_CLIENT_PROD;
     }
     else {
-      $client_id = Hacienda_constants::ENVIRONMENT_CLIENT_STAG;
+      $client_id = Hacienda_constants::AUTH_CLIENT_STAG;
     }
     return $client_id;
   }
