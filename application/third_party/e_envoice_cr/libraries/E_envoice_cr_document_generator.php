@@ -12,6 +12,7 @@ require_once dirname(__DIR__) . '/config/Hacienda_constants.php';
 abstract class E_envoice_cr_document_generator {
 
   protected $xml;
+  protected $path;
   protected $file;
   protected $type;
   protected $key;
@@ -32,6 +33,12 @@ abstract class E_envoice_cr_document_generator {
     return $this->file;
   }
 
+  public function getPath() {
+    return $this->path;
+  }
+  
+  
+
   abstract public function generateXMLDocument(&$general_data, &$receiver, &$emitter, &$items);
 
   abstract protected function initRootTag();
@@ -39,6 +46,11 @@ abstract class E_envoice_cr_document_generator {
   abstract protected function getReceptorTag(&$receiver);
 
   abstract protected function getInformacionReferenciaTag(&$data);
+  
+  protected function init(){
+    $this->path = get_documents_dir() . '/' . $this->type . '/';
+    $this->file = $this->key . '.xml';
+  }
 
   protected function getRootTag() {
     $root = $this->xml->createElement($this->root_tag);
@@ -96,15 +108,15 @@ abstract class E_envoice_cr_document_generator {
   protected function getUbicacionTag($location) {
     $locationTag = $this->xml->createElement('Ubicacion');
     $children = array();
-    $children[] = $this->getSimpleTag('Provincia', $location['prov']);
-    $children[] = $this->getSimpleTag('Canton', $location['cant']);
-    $children[] = $this->getSimpleTag('Distrito', $location['dist']);
+    array_push($children, $this->getSimpleTag('Provincia', $location['prov']));
+    array_push($children, $this->getSimpleTag('Canton', $location['cant']));
+    array_push($children, $this->getSimpleTag('Distrito', $location['dist']));
 
     if (!empty($location['barr'])) {
-      $children[] = $this->getSimpleTag('Barrio', $location['barr']);
+      array_push($children, $this->getSimpleTag('Barrio', $location['barr']));
     }
 
-    $children[] = $this->getSimpleTag('OtrasSenas', $location['other']);
+    array_push($children, $this->getSimpleTag('OtrasSenas', $location['other']));
 
     foreach ($children as $child) {
       $locationTag->appendChild($child);
@@ -125,19 +137,19 @@ abstract class E_envoice_cr_document_generator {
   protected function getResumenFacturaTag(&$data) {
     $tag = $this->xml->createElement('ResumenFactura');
     $children = array();
-    $children[] = $this->getSimpleTag('CodigoMoneda', $data['currency_code']);
-    $children[] = $this->getSimpleTag('TipoCambio', $data['currency_rate']);
-    $children[] = $this->getSimpleTag('TotalServGravados', $data['tsg']);
-    $children[] = $this->getSimpleTag('TotalServExentos', $data['tse']);
-    $children[] = $this->getSimpleTag('TotalMercanciasGravadas', $data['tmg']);
-    $children[] = $this->getSimpleTag('TotalMercanciasExentas', $data['tme']);
-    $children[] = $this->getSimpleTag('TotalGravado', $data['tg']);
-    $children[] = $this->getSimpleTag('TotalExento', $data['te']);
-    $children[] = $this->getSimpleTag('TotalVenta', $data['tv']);
-    $children[] = $this->getSimpleTag('TotalDescuentos', $data['td']);
-    $children[] = $this->getSimpleTag('TotalVentaNeta', $data['tvn']);
-    $children[] = $this->getSimpleTag('TotalImpuesto', $data['ti']);
-    $children[] = $this->getSimpleTag('TotalComprobante', $data['tc']);
+    array_push($children, $this->getSimpleTag('CodigoMoneda', $data['currency_code']));
+    array_push($children, $this->getSimpleTag('TipoCambio', $data['currency_rate']));
+    array_push($children, $this->getSimpleTag('TotalServGravados', $data['tsg']));
+    array_push($children, $this->getSimpleTag('TotalServExentos', $data['tse']));
+    array_push($children, $this->getSimpleTag('TotalMercanciasGravadas', $data['tmg']));
+    array_push($children, $this->getSimpleTag('TotalMercanciasExentas', $data['tme']));
+    array_push($children, $this->getSimpleTag('TotalGravado', $data['tg']));
+    array_push($children, $this->getSimpleTag('TotalExento', $data['te']));
+    array_push($children, $this->getSimpleTag('TotalVenta', $data['tv']));
+    array_push($children, $this->getSimpleTag('TotalDescuentos', $data['td']));
+    array_push($children, $this->getSimpleTag('TotalVentaNeta', $data['tvn']));
+    array_push($children, $this->getSimpleTag('TotalImpuesto', $data['ti']));
+    array_push($children, $this->getSimpleTag('TotalComprobante', $data['tc']));
 
     foreach ($children as $child) {
       $tag->appendChild($child);
@@ -149,8 +161,8 @@ abstract class E_envoice_cr_document_generator {
   protected function getNormativaTag(&$data) {
     $tag = $this->xml->createElement('Normativa');
     $children = array();
-    $children[] = $this->getSimpleTag('NumeroResolucion', $data['resolution']['number']);
-    $children[] = $this->getSimpleTag('FechaResolucion', $data['resolution']['date']);
+    array_push($children, $this->getSimpleTag('NumeroResolucion', $data['resolution']['number']));
+    array_push($children, $this->getSimpleTag('FechaResolucion', $data['resolution']['date']));
     foreach ($children as $child) {
       $tag->appendChild($child);
     }
@@ -169,29 +181,29 @@ abstract class E_envoice_cr_document_generator {
   protected function getLineaDetalleTag(&$item) {
     $tag = $this->xml->createElement('LineaDetalle');
     $children = array();
-    $children[] = $this->getSimpleTag('NumeroLinea', $item['line']);
-    $children[] = $this->getCodigoTag($item);
-    $children[] = $this->getSimpleTag('Cantidad', $item['quantity']);
-    $children[] = $this->getSimpleTag('UnidadMedida', $item['unit']);
+    array_push($children, $this->getSimpleTag('NumeroLinea', $item['line']));
+    array_push($children, $this->getCodigoTag($item));
+    array_push($children, $this->getSimpleTag('Cantidad', $item['quantity']));
+    array_push($children, $this->getSimpleTag('UnidadMedida', $item['unit']));
 
     if (!empty($item['unit_name'])) {
-      $children[] = $this->getSimpleTag('UnidadMedidaComercial', $item['unit_name']);
+      array_push($children, $this->getSimpleTag('UnidadMedidaComercial', $item['unit_name']));
     }
-    $children[] = $this->getSimpleTag('Detalle', $item['detail']);
-    $children[] = $this->getSimpleTag('PrecioUnitario', $item['price']);
-    $children[] = $this->getSimpleTag('MontoTotal', $item['total']);
+    array_push($children, $this->getSimpleTag('Detalle', $item['detail']));
+    array_push($children, $this->getSimpleTag('PrecioUnitario', $item['price']));
+    array_push($children, $this->getSimpleTag('MontoTotal', $item['total']));
 
     if (!empty($item['discount'])) {
-      $children[] = $this->getSimpleTag('MontoDescuento', $item['discount']['amount']);
-      $children[] = $this->getSimpleTag('NaturalezaDescuento', $item['discount']['reason']);
+      array_push($children, $this->getSimpleTag('MontoDescuento', $item['discount']['amount']));
+      array_push($children, $this->getSimpleTag('NaturalezaDescuento', $item['discount']['reason']));
     }
 
-    $children[] = $this->getSimpleTag('SubTotal', $item['subtotal']);
+    array_push($children, $this->getSimpleTag('SubTotal', $item['subtotal']));
     foreach ($item['taxes'] as $tax) {
-      $children[] = $this->getImpuestoTag($tax);
+      array_push($children, $this->getImpuestoTag($tax));
     }
 
-    $children[] = $this->getSimpleTag('MontoTotalLinea', $item['line_total_amount']);
+    array_push($children, $this->getSimpleTag('MontoTotalLinea', $item['line_total_amount']));
 
     foreach ($children as $child) {
       $tag->appendChild($child);
