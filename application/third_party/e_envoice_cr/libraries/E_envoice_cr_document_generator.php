@@ -36,8 +36,17 @@ abstract class E_envoice_cr_document_generator {
   public function getPath() {
     return $this->path;
   }
-  
-  
+
+  public function replaceXmlDocument($new_file) {
+    $current_filename = $this->path . $this->file;
+    $new_filename = $this->path . $new_file;
+
+    if (file_exists($current_filename)) {
+      @unlink($current_filename);
+    }
+
+    return rename($new_filename, $current_filename);
+  }
 
   abstract public function generateXMLDocument(&$general_data, &$receiver, &$emitter, &$items);
 
@@ -46,8 +55,8 @@ abstract class E_envoice_cr_document_generator {
   abstract protected function getReceptorTag(&$receiver);
 
   abstract protected function getInformacionReferenciaTag(&$data);
-  
-  protected function init(){
+
+  protected function init() {
     $this->path = get_documents_dir() . '/' . $this->type . '/';
     $this->file = $this->key . '.xml';
   }
