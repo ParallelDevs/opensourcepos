@@ -74,13 +74,13 @@ function generate_document_consecutive($sucursal, $terminal, $doc_type, $invoice
   return $consecutive_number;
 }
 
-function get_certificate_file() {
-  $file = FCPATH . 'uploads/certs/e_envoice_cert.p12';
-  return $file;
+function get_certificate_dir() {
+  $cert_dir = FCPATH . 'uploads/certs/';
+  return $cert_dir;
 }
 
 function is_certificate_valid() {
-  $file = get_certificate_file();
+  $cert_dir = get_certificate_dir();
 
-  return is_readable($file);
+  return is_readable($cert_dir);
 }
