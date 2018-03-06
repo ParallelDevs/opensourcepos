@@ -23,18 +23,19 @@ class E_envoice_cr_document_signer {
     return $this->_signed_file;
   }
 
-  public function signXMLDocument($xml_file) {
-    $new_xml_file = str_replace('.xml', '-signed', $xml_file);
-    $new_xml_file .= '.xml';
-    $this->_signed_file = $new_xml_file;
-    $cert_file = get_certificate_file();
+  public function signXMLDocument($document_path, $document_name) {
+    $output = array();
+    $response = 0;
+    $xml_file = str_replace('.xml', '', $document_name);
+    $this->_signed_file = $xml_file . 'segned.xml';
+    $cert_path = get_certificate_dir();
     $cert_password = $this->_ci->Appconfig->get('e_envoice_cr_cert_password');
-    $jar_file = APPPATH . 'third_party/e_envoice_cr/libraries/jar/firmar-xades.jar';
-    $command = "java -jar $jar_file $cert_file $cert_password  $xml_file $new_xml_file";
+    $jar_file = APPPATH . 'third_party/e_envoice_cr/libraries/jar/java-xades4j-signer.jar';
+    $command = "java -jar $jar_file $cert_path $cert_password $document_path $document_path $xml_file 2>&1";
 
-    exec($command, $response);
+    exec($command, $output, $response);
     // Send the response.
-    return $response;
+    return $response == 0 ? true : false;
   }
 
 }
