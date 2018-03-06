@@ -158,17 +158,18 @@ class E_envoice_cr_mapper {
 
   protected function loadDocumentNumber() {
     $key = '';
-    switch ($this->_doc_type) {
+    $type = $this->_doc_type;
+    switch ($type) {
       case Hacienda_constants::DOCUMENT_TYPE_FE:
         $key = 'e_envoice_cr_consecutive_fe';
         break;
-      case Hacienda_constants::DOCUMENT_TYPE_CODE_TE:
+      case Hacienda_constants::DOCUMENT_TYPE_TE:
         $key = 'e_envoice_cr_consecutive_te';
         break;
-      case Hacienda_constants::DOCUMENT_TYPE_CODE_NC:
+      case Hacienda_constants::DOCUMENT_TYPE_NC:
         $key = 'e_envoice_cr_consecutive_nc';
         break;
-      case Hacienda_constants::DOCUMENT_TYPE_CODE_ND:
+      case Hacienda_constants::DOCUMENT_TYPE_ND:
         $key = 'e_envoice_cr_consecutive_nd';
         break;
       default:
@@ -314,6 +315,7 @@ class E_envoice_cr_mapper {
     $this->_ci->load->library('tax_lib');
     $this->_ci->load->model('Customer');
     $this->_ci->load->model('Item_taxes');
+    $this->_ci->load->model('Item');
     $this->_ci->load->model('Tax');
     foreach ($data['cart'] as $item) {
       $line = $this->loadItem($item, $client_id);
@@ -322,6 +324,7 @@ class E_envoice_cr_mapper {
   }
 
   protected function loadItem(&$item, $client_id) {
+    $info = $this->_ci->Item->get_info($item['item_id']);
     $discount = doubleval($item['discount']);
     $quantity = doubleval($item['quantity']);
     $price = doubleval($item['price']);
