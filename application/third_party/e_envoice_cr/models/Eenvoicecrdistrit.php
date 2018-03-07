@@ -11,7 +11,7 @@ if (!defined('BASEPATH'))
 class Eenvoicecrdistrit extends CI_Model {
 
   public function exists($province_code, $canton_code, $code) {
-    $this->db->from('eenvoicecr_distrit');
+    $this->db->from('eenvoicecr_distrits');
     $this->db->where(array(
       'province_code' => $province_code,
       'canton_code' => $canton_code,
@@ -23,7 +23,7 @@ class Eenvoicecrdistrit extends CI_Model {
 
   public function get_all($province_code, $canton_code) {
     $this->db->select('province_code,canton_code,code,name');
-    $this->db->from('eenvoicecr_distrit');
+    $this->db->from('eenvoicecr_distrits');
     $this->db->where(array(
       'province_code' => $province_code,
       'canton_code' => $canton_code,
@@ -36,7 +36,7 @@ class Eenvoicecrdistrit extends CI_Model {
 
   public function get($province_code = '', $canton_code = '', $code = '') {
 
-    $query = $this->db->get_where('eenvoicecr_distrit', array(
+    $query = $this->db->get_where('eenvoicecr_distrits', array(
       'province_code' => $province_code,
       'canton_code' => $canton_code,
       'code' => $code), 1);
@@ -57,12 +57,12 @@ class Eenvoicecrdistrit extends CI_Model {
     );
 
     if (!$this->exists($province_code, $canton_code, $code)) {
-      return $this->db->insert('eenvoicecr_distrit', $data);
+      return $this->db->insert('eenvoicecr_distrits', $data);
     }
 
     $this->db->where(array('province_code' => $province_code, 'canton_code' => $canton_code, 'code' => $code));
 
-    return $this->db->update('eenvoicecr_distrit', $data);
+    return $this->db->update('eenvoicecr_distrits', $data);
   }
 
 }

@@ -1,11 +1,11 @@
-CREATE TABLE `ospos_eenvoicecr_province` (
+CREATE TABLE `ospos_eenvoicecr_provinces` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(2) NOT NULL,
   `name` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
-CREATE TABLE `ospos_eenvoicecr_canton` (
+CREATE TABLE `ospos_eenvoicecr_cantons` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `province_code` varchar(2) NOT NULL,
   `code` varchar(2) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE `ospos_eenvoicecr_canton` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=latin1;
 
-CREATE TABLE `ospos_eenvoicecr_distrit` (
+CREATE TABLE `ospos_eenvoicecr_distrits` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `province_code` varchar(2) NOT NULL,
   `canton_code` varchar(2) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE `ospos_eenvoicecr_distrit` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=476 DEFAULT CHARSET=latin1;
 
-CREATE TABLE `ospos_eenvoicecr_neighborhood` (
+CREATE TABLE `ospos_eenvoicecr_neighborhoods` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `province_code` varchar(2) NOT NULL,
   `canton_code` varchar(2) NOT NULL,
@@ -33,9 +33,9 @@ CREATE TABLE `ospos_eenvoicecr_neighborhood` (
 ) ENGINE=InnoDB AUTO_INCREMENT=6604 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `ospos_eenvoicecr_province`
+-- Dumping data for table `ospos_eenvoicecr_provinces`
 --
-INSERT INTO `ospos_eenvoicecr_province` (`id`, `code`, `name`) VALUES
+INSERT INTO `ospos_eenvoicecr_provinces` (`id`, `code`, `name`) VALUES
 ('1', '1', 'San José'),
 ('2', '2', 'Alajuela'),
 ('3', '3', 'Cartago'),
@@ -45,9 +45,9 @@ INSERT INTO `ospos_eenvoicecr_province` (`id`, `code`, `name`) VALUES
 ('7', '7', 'Limón');
 
 --
--- Dumping data for table `ospos_eenvoicecr_canton`
+-- Dumping data for table `ospos_eenvoicecr_cantons`
 --
-INSERT INTO `ospos_eenvoicecr_canton` (`id`, `province_code`, `code`, `name`) VALUES
+INSERT INTO `ospos_eenvoicecr_cantons` (`id`, `province_code`, `code`, `name`) VALUES
 ('1', '1', '01', 'San José'),
 ('2', '1', '02', 'Escazú'),
 ('3', '1', '03', 'Desamparados'),
@@ -131,9 +131,9 @@ INSERT INTO `ospos_eenvoicecr_canton` (`id`, `province_code`, `code`, `name`) VA
 ('81', '7', '06', 'Guácimo');
 
 --
--- Dumping data for table `ospos_eenvoicecr_distrit`
+-- Dumping data for table `ospos_eenvoicecr_distrits`
 --
-INSERT INTO `ospos_eenvoicecr_distrit` (`id`, `province_code`, `canton_code`, `code`, `name`) VALUES
+INSERT INTO `ospos_eenvoicecr_distrits` (`id`, `province_code`, `canton_code`, `code`, `name`) VALUES
 ('1', '1', '01', '01', 'CARMEN'),
 ('2', '1', '01', '02', 'MERCED'),
 ('3', '1', '01', '03', 'HOSPITAL'),
@@ -611,9 +611,9 @@ INSERT INTO `ospos_eenvoicecr_distrit` (`id`, `province_code`, `canton_code`, `c
 ('475', '7', '81', '05', 'DUACARÍ');
 
 --
--- Dumping data for table `ospos_eenvoicecr_neighborhood`
+-- Dumping data for table `ospos_eenvoicecr_neighborhoods`
 --
-INSERT INTO `ospos_eenvoicecr_neighborhood`(`id`, `province_code`, `canton_code`, `distrit_code`, `code`, `name`) VALUES 
+INSERT INTO `ospos_eenvoicecr_neighborhoods`(`id`, `province_code`, `canton_code`, `distrit_code`, `code`, `name`) VALUES 
 ('1', '1', '01', '01', '01', 'Amón'),
 ('2', '1', '01', '01', '02', 'Aranjuez'),
 ('3', '1', '01', '01', '03', 'California (parte)'),

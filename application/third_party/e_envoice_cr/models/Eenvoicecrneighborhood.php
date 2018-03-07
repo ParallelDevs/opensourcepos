@@ -11,7 +11,7 @@ if (!defined('BASEPATH'))
 class Eenvoicecrneighborhood extends CI_Model {
 
   public function exists($province_code, $canton_code, $distrit_code, $code) {
-    $this->db->from('eenvoicecr_neighborhood');
+    $this->db->from('eenvoicecr_neighborhoods');
     $this->db->where(array(
       'province_code' => $province_code,
       'canton_code' => $canton_code,
@@ -24,7 +24,7 @@ class Eenvoicecrneighborhood extends CI_Model {
 
   public function get_all($province_code, $canton_code, $distrit_code) {
     $this->db->select('province_code,canton_code,distrit_code,code,name');
-    $this->db->from('eenvoicecr_neighborhood');
+    $this->db->from('eenvoicecr_neighborhoods');
     $this->db->where(array(
       'province_code' => $province_code,
       'canton_code' => $canton_code,
@@ -38,7 +38,7 @@ class Eenvoicecrneighborhood extends CI_Model {
 
   public function get($province_code = '', $canton_code = '', $distrit_code = '', $code = '') {
 
-    $query = $this->db->get_where('eenvoicecr_neighborhood', array(
+    $query = $this->db->get_where('eenvoicecr_neighborhoods', array(
       'province_code' => $province_code,
       'canton_code' => $canton_code,
       'distrit_code' => $distrit_code,
@@ -61,7 +61,7 @@ class Eenvoicecrneighborhood extends CI_Model {
     );
 
     if (!$this->exists($province_code, $canton_code, $distrit_code, $code)) {
-      return $this->db->insert('eenvoicecr_neighborhood', $data);
+      return $this->db->insert('eenvoicecr_neighborhoods', $data);
     }
 
     $this->db->where(array(
@@ -70,7 +70,7 @@ class Eenvoicecrneighborhood extends CI_Model {
       'distrit_code' => $distrit_code,
       'code' => $code));
 
-    return $this->db->update('eenvoicecr_neighborhood', $data);
+    return $this->db->update('eenvoicecr_neighborhoods', $data);
   }
 
 }
