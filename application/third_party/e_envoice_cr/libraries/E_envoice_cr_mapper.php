@@ -296,7 +296,8 @@ class E_envoice_cr_mapper {
     if (-1 == $client_id) {
       return;
     }
-
+    
+    $customer = $this->_ci->Customer->get_info($client_id);
     $name = $data['first_name'] . ' ' . $data['last_name'];
     $commercial_name = strcasecmp($name, $data['customer']) != 0 ? $data['customer'] : '';
     $email = $data['customer_email'];
@@ -304,7 +305,7 @@ class E_envoice_cr_mapper {
     $this->_client['id'] = array();
     $this->_client['commercialName'] = $commercial_name;
     $this->_client['email'] = $email;
-    $this->_client['phone'] = array();
+    $this->_client['phone'] = $this->mapPhoneNumber($customer->phone_number);
     $this->_client['fax'] = array();
     $this->_client['location'] = array();
   }
@@ -324,7 +325,6 @@ class E_envoice_cr_mapper {
   }
 
   protected function loadItem(&$item, $client_id) {
-    $info = $this->_ci->Item->get_info($item['item_id']);
     $discount = doubleval($item['discount']);
     $quantity = doubleval($item['quantity']);
     $price = doubleval($item['price']);
@@ -334,6 +334,10 @@ class E_envoice_cr_mapper {
     $tax_amount = 0.0;
     $taxes = $this->getItemTaxes($item, $client_id, $tax_amount);
     $line_total_amount = $subtotal + $tax_amount;
+    $customer_discount = 0.0;
+    if ($this->_ci->Customer->exists($client_id)) {
+      $customer_discount = $this->_ci->Customer->get_info($client_id)->discount_percent;
+    }
 
     $line = array(
       'line' => $item['line'],
@@ -341,7 +345,7 @@ class E_envoice_cr_mapper {
       'detail' => $item['name'],
       'price' => round($price, 5),
       'code' => array('type' => '04', 'number' => $item['item_number']),
-      //'unit' => 'Unid',
+      'unit' => 'Unid',
       'total' => round($total_amount, 5),
       'subtotal' => round($subtotal, 5),
       'line_total_amount' => round($line_total_amount, 5),
@@ -351,7 +355,7 @@ class E_envoice_cr_mapper {
 
     if ($discount_amount <> 0.0) {
       $line['discount']['amount'] = round($discount_amount, 5);
-      $line['discount']['reason'] = 'Discount';
+      $line['discount']['reason'] = (0.0 <> $customer_discount) ? 'Descuento a cliente' : 'Descuento general';
     }
     $this->addLineToSummary($item['stock_type'], $discount_amount, $tax_amount, $total_amount);
     return $line;
