@@ -23,7 +23,7 @@ class E_envoice_cr_communicator {
     $this->_ci = & get_instance();
     $this->_ci->load->add_package_path(APPPATH . 'third_party/e_envoice_cr/');
     $this->_ci->load->model('Appconfig');
-    
+
     $this->_message = '';
     $this->_document_status = '';
     $this->_auth_token = '';
@@ -44,15 +44,7 @@ class E_envoice_cr_communicator {
   public function sendDocument(&$document_info, $xml_file) {
     $this->login();
     $url = $this->getAPIUrl() . 'recepcion';
-    $client = new Client([
-      'http_errors' => false,
-      'connect_timeout' => 5,
-      'timeout' => 15,
-      'headers' => [
-        'Authorization' => 'Bearer ' . $this->_auth_token,
-        'Accept' => 'application/json',
-      ],
-    ]);
+    $client = $this->getConnectionClient();
     $data = $this->getDocumentPayload($document_info, $xml_file);
     try {
       $response = $client->post($url, [
@@ -60,7 +52,7 @@ class E_envoice_cr_communicator {
       ]);
       $this->processSendDocumentResponse($response);
     }
-    catch (GuzzleHttp\Exception\RequestException $e_req) {      
+    catch (GuzzleHttp\Exception\RequestException $e_req) {
       $this->_message = $e_req->getMessage();
       $this->_document_status = 'Pendiente';
       $this->_document_url = '';
@@ -72,13 +64,13 @@ class E_envoice_cr_communicator {
     switch ($code) {
       case 201:
       case 202:
-        $url = $response->getHeader('Location');        
+        $url = $response->getHeader('Location');
         $this->_message = 'Enviado';
         $this->_document_status = 'Enviado';
         $this->_document_url = implode(' ', $url);
         break;
       case 400:
-        $message = $response->getHeader('X-Error-Cause');        
+        $message = $response->getHeader('X-Error-Cause');
         $this->_message = implode('. ', $message);
         $this->_document_status = 'Invalido';
         $this->_document_url = '';
@@ -156,6 +148,19 @@ class E_envoice_cr_communicator {
       ],
     ];
     return $options;
+  }
+
+  protected function getConnectionClient() {
+    $client = new Client([
+      'http_errors' => false,
+      'connect_timeout' => 5,
+      'timeout' => 15,
+      'headers' => [
+        'Authorization' => 'Bearer ' . $this->_auth_token,
+        'Accept' => 'application/json',
+      ],
+    ]);
+    return $client;
   }
 
   protected function getDocumentPayload(&$document_info, $xml_file) {
