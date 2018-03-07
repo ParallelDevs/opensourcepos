@@ -14,43 +14,148 @@ use GuzzleHttp\RequestOptions;
 class E_envoice_cr_communicator {
 
   private $_ci;
-  private $_success;
+  private $_message;
+  private $_document_status;
+  private $_document_url;
+  private $_auth_token;
 
   public function __construct() {
     $this->_ci = & get_instance();
     $this->_ci->load->add_package_path(APPPATH . 'third_party/e_envoice_cr/');
     $this->_ci->load->model('Appconfig');
-    $this->_success = false;
+    
+    $this->_message = '';
+    $this->_document_status = '';
+    $this->_auth_token = '';
   }
 
-  public function sendDocument(&$document_info, $xml_file, $auth_token) {
-    $url = $this->getUrl();
-    $url .= 'recepcion';
+  public function getURLDocument() {
+    return $this->_document_url;
+  }
+
+  public function getErrorMessage() {
+    return $this->_message;
+  }
+
+  public function getStatus() {
+    return $this->_document_status;
+  }
+
+  public function sendDocument(&$document_info, $xml_file) {
+    $this->login();
+    $url = $this->getAPIUrl() . 'recepcion';
     $client = new Client([
       'http_errors' => false,
+      'connect_timeout' => 5,
+      'timeout' => 15,
       'headers' => [
-        'Authorization' => 'Bearer ' . $auth_token,
+        'Authorization' => 'Bearer ' . $this->_auth_token,
         'Accept' => 'application/json',
       ],
     ]);
     $data = $this->getDocumentPayload($document_info, $xml_file);
+    try {
+      $response = $client->post($url, [
+        RequestOptions::JSON => $data,
+      ]);
+      $this->processSendDocumentResponse($response);
+    }
+    catch (GuzzleHttp\Exception\RequestException $e_req) {      
+      $this->_message = $e_req->getMessage();
+      $this->_document_status = 'Pendiente';
+      $this->_document_url = '';
+    }
+  }
 
-
-    $response = $client->post($url, [
-      RequestOptions::JSON => $data,
-    ]);
-
+  protected function processSendDocumentResponse(&$response) {
     $code = $response->getStatusCode();
     switch ($code) {
       case 201:
       case 202:
-        $this->_success = true;
+        $url = $response->getHeader('Location');        
+        $this->_message = 'Enviado';
+        $this->_document_status = 'Enviado';
+        $this->_document_url = implode(' ', $url);
         break;
       case 400:
-      case 403:
-        $this->_success = false;
+        $message = $response->getHeader('X-Error-Cause');        
+        $this->_message = implode('. ', $message);
+        $this->_document_status = 'Invalido';
+        $this->_document_url = '';
+        break;
+      default :
         break;
     }
+  }
+
+  /**
+   * It gets the connection token.
+   */
+  protected function login() {
+    $username = $this->_ci->Appconfig->get('e_envoice_cr_username');
+    $password = $this->_ci->Appconfig->get('e_envoice_cr_password');
+    $url = $this->getAuthenticationURL();
+    $client_id = $this->getAuthenticationClientId();
+
+    if ($username !== "" && $password !== "") {
+      $options = $this->getAuthenticationOptions($username, $password, $client_id);
+      $context = stream_context_create($options);
+      $result = file_get_contents($url, FALSE, $context);
+      if ($result === FALSE) {
+        echo $result;
+      }
+
+      // Get a token object.
+      $token = json_decode($result);
+      // Return a json object whith token and refresh token.
+      $this->_auth_token = $token->access_token;
+    }
+    else {
+      $this->_auth_token = "";
+    }
+    return $this->_auth_token;
+  }
+
+  protected function getAuthenticationURL() {
+    $environment = $this->_ci->Appconfig->get('e_envoice_cr_env');
+    if ($environment === Hacienda_constants::ENVIRONMENT_TYPE_PROD) {
+      $url = Hacienda_constants::AUTH_URL_PROD;
+    }
+    else {
+      $url = Hacienda_constants::AUTH_URL_STAG;
+    }
+    return $url;
+  }
+
+  protected function getAuthenticationClientId() {
+    $environment = $this->_ci->Appconfig->get('e_envoice_cr_env');
+    if ($environment === Hacienda_constants::ENVIRONMENT_TYPE_PROD) {
+      $client_id = Hacienda_constants::AUTH_CLIENT_PROD;
+    }
+    else {
+      $client_id = Hacienda_constants::AUTH_CLIENT_STAG;
+    }
+    return $client_id;
+  }
+
+  protected function getAuthenticationOptions(&$username, &$password, &$client_id) {
+    $data = [
+      'client_id' => $client_id,
+      'client_secret' => '',
+      'grant_type' => 'password',
+      'username' => $username,
+      'password' => $password,
+      'scope' => '',
+    ];
+    // Use key 'http' even if you send the request to https://.
+    $options = [
+      'http' => [
+        'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+        'method' => 'POST',
+        'content' => http_build_query($data),
+      ],
+    ];
+    return $options;
   }
 
   protected function getDocumentPayload(&$document_info, $xml_file) {
@@ -77,7 +182,7 @@ class E_envoice_cr_communicator {
     return $data;
   }
 
-  protected function getUrl() {
+  protected function getAPIUrl() {
     $environment = $this->_ci->Appconfig->get('e_envoice_cr_env');
     if ($environment === Hacienda_constants::ENVIRONMENT_TYPE_PROD) {
       $url = Hacienda_constants::API_URL_PROD;
