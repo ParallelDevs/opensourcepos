@@ -7281,3 +7281,6 @@ INSERT INTO `ospos_app_config` (`key`, `value`) VALUES
 ('e_envoice_cr_consecutive_nc',''),
 ('e_envoice_cr_consecutive_nd','');
 
+INSERT INTO `ospos_app_config` (`key`, `value`) VALUES
+('e_envoice_cr_document_version', '4.2'),
+('e_envoice_cr_document_legend', 'Autorizada mediante resolución Nº DGT-R-48-2016 del 7 de octubre de 2016');
