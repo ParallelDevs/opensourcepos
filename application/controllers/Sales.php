@@ -968,7 +968,7 @@ class Sales extends Secure_Controller
 		}
 		elseif($this->sale_lib->get_mode() == 'return')
 		{
-			$data['mode_label'] = $this->lang->line('return');
+			$data['mode_label'] = $this->lang->line('sales_return');
 			$data['customer_required'] = $this->lang->line('sales_customer_optional');
 		}
 		else
@@ -1077,7 +1077,7 @@ class Sales extends Secure_Controller
 		}
 		elseif($this->sale_lib->get_mode() == 'return')
 		{
-			$data['mode_label'] = $this->lang->line('return');
+			$data['mode_label'] = $this->lang->line('sales_return');
 			$data['customer_required'] = $this->lang->line('sales_customer_optional');
 		}
 		else

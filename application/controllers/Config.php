@@ -298,7 +298,6 @@ class Config extends Secure_Controller
 			'suggestions_third_column' => $this->input->post('suggestions_third_column'),
 			'giftcard_number' => $this->input->post('giftcard_number'),
 			'derive_sale_quantity' => $this->input->post('derive_sale_quantity') != NULL,
-			'statistics' => $this->input->post('statistics') != NULL,
 			'custom1_name' => $this->input->post('custom1_name'),
 			'custom2_name' => $this->input->post('custom2_name'),
 			'custom3_name' => $this->input->post('custom3_name'),
@@ -322,7 +321,7 @@ class Config extends Secure_Controller
 		));
 	}
 
-	public function check_number_locale()
+	public function ajax_check_number_locale()
 	{
 		$number_locale = $this->input->post('number_locale');
 		$fmt = new \NumberFormatter($number_locale, \NumberFormatter::CURRENCY);
@@ -851,6 +850,7 @@ class Config extends Secure_Controller
 			'line_sequence' => $this->input->post('line_sequence'),
 			'last_used_invoice_number' =>$this->input->post('last_used_invoice_number'),
 			'last_used_quote_number' =>$this->input->post('last_used_quote_number'),
+			'quote_default_comments' => $this->input->post('quote_default_comments'),
 			'work_order_enable' => $this->input->post('work_order_enable') != NULL,
 			'work_order_format' => $this->input->post('work_order_format'),
 			'last_used_work_order_number' =>$this->input->post('last_used_work_order_number')
