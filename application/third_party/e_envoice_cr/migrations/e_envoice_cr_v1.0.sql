@@ -36,6 +36,7 @@ CREATE TABLE `ospos_eenvoicecr_sales_documents` (
   `document_id` int(11) NOT NULL AUTO_INCREMENT,
   `sale_id` int(10) NOT NULL,
   `document_key` varchar(80) NOT NULL,
+  `document_consecutive` varchar(32) NOT NULL,
   `document_code` varchar(4) NOT NULL,
   `document_status` varchar(32) NOT NULL,
   `document_url` varchar(255) NOT NULL,
@@ -48,8 +49,9 @@ ALTER TABLE `ospos_eenvoicecr_sales_documents`
   ADD CONSTRAINT `ospos_eenvoicecr_sales_documents_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `ospos_sales_items` (`sale_id`),
   ADD INDEX `ospos_eenvoicecr_sales_documents_in1` (`sale_id`),
   ADD INDEX `ospos_eenvoicecr_sales_documents_in2` (`document_key`),
-  ADD INDEX `ospos_eenvoicecr_sales_documents_in3` (`document_code`),
-  ADD INDEX `ospos_eenvoicecr_sales_documents_in4` (`document_status`);
+  ADD INDEX `ospos_eenvoicecr_sales_documents_in3` (`document_consecutive`),
+  ADD INDEX `ospos_eenvoicecr_sales_documents_in4` (`document_code`),
+  ADD INDEX `ospos_eenvoicecr_sales_documents_in5` (`document_status`);
 
 --
 -- Dumping data for table `ospos_eenvoicecr_provinces`

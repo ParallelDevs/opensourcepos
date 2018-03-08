@@ -76,6 +76,10 @@ class E_envoice_cr_mapper {
   public function getDocumentKey() {
     return $this->_doc_key;
   }
+  
+  public function getDocumentConsecutive() {
+    return $this->_doc_consecutive;
+  }
 
   public function increaseDocumentNumber() {
     $clean_counter = ltrim($this->_doc_number, '0');
@@ -130,7 +134,7 @@ class E_envoice_cr_mapper {
     $this->_document['tme'] = 0.0;
     $this->_document['tg'] = 0.0;
     $this->_document['te'] = 0.0;
-    $this->_document['tv'] = 0.;
+    $this->_document['tv'] = 0.0;
     $this->_document['td'] = 0.0;
     $this->_document['tvn'] = 0.0;
     $this->_document['ti'] = 0.0;

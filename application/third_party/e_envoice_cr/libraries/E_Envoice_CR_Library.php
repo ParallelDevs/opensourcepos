@@ -26,9 +26,12 @@ class E_Envoice_CR_Library {
   }
 
   public function sendSaleDocument(&$sale_data, $sale_type, $client_id) {
+    $result = false;
     $this->generateXmlDocument($sale_data, $sale_type, $client_id);
-    $this->signXmlDocument();
-    return $this->sendXmlDocument();
+    if ($this->signXmlDocument()) {
+      $result = $this->sendXmlDocument();
+    }
+    return $result;
   }
 
   protected function generateXmlDocument(&$sale_data, &$sale_type, &$client_id) {
@@ -54,6 +57,7 @@ class E_Envoice_CR_Library {
     $signed = $this->_ci->e_envoice_cr_document_signer->signXMLDocument($xml_path, $xml_document);
     $signed_document = $this->_ci->e_envoice_cr_document_signer->getSignedXMLDocument();
     if ($signed) {
+      $this->_ci->e_envoice_cr_mapper->increaseDocumentNumber();
       return $this->_xml_generator->replaceXmlDocument($signed_document);
     }
 
@@ -67,8 +71,10 @@ class E_Envoice_CR_Library {
     $this->_ci->load->library('e_envoice_cr_communicator');
     $this->_ci->e_envoice_cr_communicator->sendDocument($document_info, $xml_path . $signed_document);
     $doc_type = $this->_ci->e_envoice_cr_mapper->getDocumentType();
+    $consecutive = $this->_ci->e_envoice_cr_mapper->getDocumentConsecutive();
     $sale_document_info = array(
       'document_key' => $document_info['key'],
+      'document_consecutive' => $consecutive,
       'document_code' => Hacienda_constants::get_code_by_document_type($doc_type),
       'document_status' => $this->_ci->e_envoice_cr_communicator->getStatus(),
       'document_url' => $this->_ci->e_envoice_cr_communicator->getURLDocument(),
@@ -81,7 +87,7 @@ class E_Envoice_CR_Library {
     $general_data = $this->_ci->e_envoice_cr_mapper->getDocumentData();
     $emitter = $this->_ci->e_envoice_cr_mapper->getEmitterData();
     $client = $this->_ci->e_envoice_cr_mapper->getClientData();
-    
+
     $document_info = array(
       'key' => $general_data['key'],
       'date' => $general_data['date'],
@@ -91,7 +97,7 @@ class E_Envoice_CR_Library {
       ],
       'receiver' => array(),
     );
-    
+
     if (!empty($client) && array_key_exists('id', $client)) {
       $document_info['receiver']['id_type'] = $client['id']['type'];
       $document_info['receiver']['id_number'] = $client['id']['number'];
