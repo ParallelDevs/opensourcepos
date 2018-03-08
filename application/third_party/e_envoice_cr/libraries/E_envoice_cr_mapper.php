@@ -22,6 +22,7 @@ class E_envoice_cr_mapper {
   private $_doc_key;
   private $_doc_consecutive;
   private $_secure_code;
+  private $_comments;
 
   public function __construct() {
     $this->_ci = & get_instance();
@@ -29,6 +30,7 @@ class E_envoice_cr_mapper {
     $this->_emitter = array();
     $this->_client = array();
     $this->_cart = array();
+    $this->_comments = array();
     $this->_ci->load->add_package_path(APPPATH . 'third_party/e_envoice_cr/');
     $this->_ci->load->helper('invoice');
     $this->_ci->load->model('Appconfig');
@@ -233,6 +235,13 @@ class E_envoice_cr_mapper {
           break;
         default:
           array_push($payments, '99');
+          list($type, $id) = explode(":", $pay_type['payment_type']);
+          $amount = $pay_type['payment_amount'];
+          $comment = array(
+            'code' => '99',
+            'text' => "Medio de pago: $type con valor de $amount",
+          );
+          array_push($this->_comments, $comment);
           break;
       }
     }
@@ -252,10 +261,13 @@ class E_envoice_cr_mapper {
   protected function getOtros(&$data) {
     $others = array();
     if (!empty($data['comments'])) {
-      $others[] = $data['comments'];
+      array_push($others, $data['comments']);
     }
     if (array_key_exists('customer_comments', $data)) {
-      $others[] = $data["customer_comments"];
+      array_push($others, $data["customer_comments"]);
+    }
+    foreach ($this->_comments as $comment) {
+      array_push($others, $comment);
     }
     return $others;
   }
@@ -296,7 +308,7 @@ class E_envoice_cr_mapper {
     if (-1 == $client_id) {
       return;
     }
-    
+
     $customer = $this->_ci->Customer->get_info($client_id);
     $name = $data['first_name'] . ' ' . $data['last_name'];
     $commercial_name = strcasecmp($name, $data['customer']) != 0 ? $data['customer'] : '';
