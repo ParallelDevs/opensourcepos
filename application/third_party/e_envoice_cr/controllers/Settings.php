@@ -180,7 +180,7 @@ class Settings extends Secure_Controller {
     // load upload library
     $config = array('upload_path' => './uploads/certs/',
       'allowed_types' => 'p12',
-      'file_name' => 'e_envoice_cert',
+      'file_name' => 'cert',
       'overwrite' => true,
     );
     $this->load->library('upload', $config);
