@@ -247,11 +247,23 @@ abstract class E_envoice_cr_document_generator {
     $tag = $this->xml->createElement('Otros');
 
     foreach ($data['others'] as $element) {
-      $child = $this->getSimpleTag('OtroTexto', $element);
-      $tag->appendChild($child);
+      if (!empty($element)) {
+        $child = $this->getOtroTextoTag($element);
+        $tag->appendChild($child);
+      }
     }
-
     return $tag;
+  }
+
+  protected function getOtroTextoTag(&$element) {
+    if (is_array($element)) {
+      $child = $this->xml->createElement('OtroTexto', $element['text']);
+      $child->setAttribute('codigo', $element['code']);
+    }
+    else {
+      $child = $this->getSimpleTag('OtroTexto', $element);
+    }
+    return $child;
   }
 
   protected function getMedioPagoTag(&$data, &$children) {
