@@ -32,6 +32,25 @@ CREATE TABLE `ospos_eenvoicecr_neighborhoods` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6604 DEFAULT CHARSET=latin1;
 
+CREATE TABLE `ospos_eenvoicecr_sales_documents` (
+  `document_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sale_id` int(10) NOT NULL,
+  `document_key` varchar(80) NOT NULL,
+  `document_code` varchar(4) NOT NULL,
+  `document_status` varchar(32) NOT NULL,
+  `document_url` varchar(255) NOT NULL,
+  `sent_xml` varchar(512) NULL,
+  `received_xml` varchar(512) NULL,
+  PRIMARY KEY (`document_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `ospos_eenvoicecr_sales_documents`
+  ADD CONSTRAINT `ospos_eenvoicecr_sales_documents_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `ospos_sales_items` (`sale_id`),
+  ADD INDEX `ospos_eenvoicecr_sales_documents_in1` (`sale_id`),
+  ADD INDEX `ospos_eenvoicecr_sales_documents_in2` (`document_key`),
+  ADD INDEX `ospos_eenvoicecr_sales_documents_in3` (`document_code`),
+  ADD INDEX `ospos_eenvoicecr_sales_documents_in4` (`document_status`);
+
 --
 -- Dumping data for table `ospos_eenvoicecr_provinces`
 --
@@ -613,7 +632,7 @@ INSERT INTO `ospos_eenvoicecr_distrits` (`id`, `province_code`, `canton_code`, `
 --
 -- Dumping data for table `ospos_eenvoicecr_neighborhoods`
 --
-INSERT INTO `ospos_eenvoicecr_neighborhoods`(`id`, `province_code`, `canton_code`, `distrit_code`, `code`, `name`) VALUES 
+INSERT INTO `ospos_eenvoicecr_neighborhoods`(`id`, `province_code`, `canton_code`, `distrit_code`, `code`, `name`) VALUES
 ('1', '1', '01', '01', '01', 'Amón'),
 ('2', '1', '01', '01', '02', 'Aranjuez'),
 ('3', '1', '01', '01', '03', 'California (parte)'),
