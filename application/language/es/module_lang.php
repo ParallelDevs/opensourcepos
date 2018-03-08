@@ -35,3 +35,4 @@ $lang["module_suppliers"] = "Proveedores";
 $lang["module_suppliers_desc"] = "Agregar, Actualizar, Borrar y Buscar Proveedores.";
 $lang["module_taxes"] = "Impuestos";
 $lang["module_taxes_desc"] = "Configurar Impuestos de Ventas.";
+$lang["module_e_envoice_cr"] = "Factura Electrónica CR";
