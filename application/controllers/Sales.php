@@ -15,6 +15,7 @@ class Sales extends Secure_Controller
 		$this->load->library('barcode_lib');
 		$this->load->library('email_lib');
 		$this->load->library('token_lib');
+    $this->load->library('e_envoice_cr_lib');
 	}
 
 	public function index()
@@ -624,7 +625,9 @@ class Sales extends Secure_Controller
 				$data['invoice_number'] = $invoice_number;
 				$data['sale_status'] = COMPLETED;
 				$sale_type = SALE_TYPE_INVOICE;
-
+        
+        $sale_document = $this->e_envoice_cr_lib->sendSaleDocument($data, $sale_type, $customer_id);
+        
 				// Save the data to the sales table
 				$data['sale_id_num'] = $this->Sale->save($sale_id, $data['sale_status'], $data['cart'], $customer_id, $employee_id, $data['comments'], $invoice_number, $work_order_number, $quote_number, $sale_type, $data['payments'], $data['dinner_table'], $data['taxes']);
 				$data['sale_id'] = 'POS ' . $data['sale_id_num'];
@@ -640,6 +643,12 @@ class Sales extends Secure_Controller
 				}
 				else
 				{
+          if(false !== $sale_document ){
+            $sale_document['sale_id'] = $data['sale_id_num'];
+            $this->load->model('Eenvoicecrsaledocuments');
+            $this->Eenvoicecrsaledocuments->save($sale_document);            
+          }
+          
 					$data['barcode'] = $this->barcode_lib->generate_receipt_barcode($data['sale_id']);
 					$this->load->view('sales/invoice', $data);
 					$this->sale_lib->clear_all();
@@ -738,6 +747,12 @@ class Sales extends Secure_Controller
 			{
 				$sale_type = SALE_TYPE_POS;
 			}
+      
+      if(SALE_TYPE_POS === $sale_type ){
+        $sale_document = $this->e_envoice_cr_lib->sendSaleDocument($data, $sale_type, $customer_id);
+      }else {
+        $sale_document = false;
+      }
 
 			$data['sale_id_num'] = $this->Sale->save($sale_id, $data['sale_status'], $data['cart'], $customer_id, $employee_id, $data['comments'], $invoice_number, $work_order_number, $quote_number, $sale_type, $data['payments'], $data['dinner_table'], $data['taxes']);
 
@@ -752,6 +767,12 @@ class Sales extends Secure_Controller
 			}
 			else
 			{
+        if(false !== $sale_document ){
+          $sale_document['sale_id'] = $data['sale_id_num'];
+          $this->load->model('Eenvoicecrsaledocuments');
+          $this->Eenvoicecrsaledocuments->save($sale_document);          
+        }
+        
 				$data['barcode'] = $this->barcode_lib->generate_receipt_barcode($data['sale_id']);
 
 				// Reload (sorted) and filter the cart line items for printing purposes
