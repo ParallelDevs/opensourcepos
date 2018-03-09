@@ -1,6 +1,7 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+if (!defined('BASEPATH'))
+  exit('No direct script access allowed');
 
 /**
  * Description of E_envoice_document_signer

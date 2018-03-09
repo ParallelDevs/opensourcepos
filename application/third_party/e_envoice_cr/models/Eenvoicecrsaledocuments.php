@@ -1,7 +1,8 @@
 <?php
 
-if (!defined('BASEPATH'))
+if (!defined('BASEPATH')) {
   exit('No direct script access allowed');
+}
 
 /**
  * Description of Eenvoicecrdocument
@@ -18,12 +19,11 @@ class Eenvoicecrsaledocuments extends CI_Model {
     return ($this->db->get()->num_rows() == 1);
   }
 
-  public function get_all($sale_id = '', $document_key = '', $document_code = '', $document_status = '') {
+  public function get_all($sale_id = '', $document_code = '', $document_status = '') {
     $this->db->select('document_id,sale_id,document_key,document_code,document_status');
     $this->db->from('eenvoicecr_sales_documents');
     $this->db->where(array(
       'sale_id' => $sale_id,
-      'document_key' => $document_key,
       'document_code' => $document_code,
       'document_status' => $document_status,
     ));

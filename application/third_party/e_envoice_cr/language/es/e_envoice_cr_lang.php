@@ -16,4 +16,5 @@ $lang["e_envoice_cr_address_canton"] = "Cantón";
 $lang["e_envoice_cr_address_distrit"] = "Distrito";
 $lang["e_envoice_cr_address_neighborhood"] = "Barrio";
 $lang["e_envoice_cr_address_other"] = "Otras Señas";
+$lang["e_envoice_cr_document_version"] = "Versión Documento";
 

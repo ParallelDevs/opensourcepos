@@ -1,6 +1,8 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+if (!defined('BASEPATH'))
+  exit('No direct script access allowed');
+
 require_once __DIR__ . '/E_envoice_cr_document_generator.php';
 
 /**

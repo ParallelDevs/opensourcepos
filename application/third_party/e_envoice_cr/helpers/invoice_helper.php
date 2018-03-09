@@ -1,6 +1,7 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+if (!defined('BASEPATH'))
+  exit('No direct script access allowed');
 
 function get_documents_dir() {
   $invoice_dir = APPPATH . '/third_party/e_envoice_cr/xml';

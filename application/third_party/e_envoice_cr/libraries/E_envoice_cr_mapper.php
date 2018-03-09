@@ -1,5 +1,8 @@
 <?php
 
+if (!defined('BASEPATH'))
+  exit('No direct script access allowed');
+
 require_once dirname(__DIR__) . '/config/Hacienda_constants.php';
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -76,7 +79,7 @@ class E_envoice_cr_mapper {
   public function getDocumentKey() {
     return $this->_doc_key;
   }
-  
+
   public function getDocumentConsecutive() {
     return $this->_doc_consecutive;
   }
