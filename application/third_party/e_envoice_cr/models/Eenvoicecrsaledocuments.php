@@ -20,7 +20,7 @@ class Eenvoicecrsaledocuments extends CI_Model {
   }
 
   public function get_all($sale_id = '', $document_code = '', $document_status = '') {
-    $this->db->select('document_id,sale_id,document_key,document_code,document_status');
+    $this->db->select('eenvoicecr_sales_documents.*');
     $this->db->from('eenvoicecr_sales_documents');
     $this->db->where(array(
       'sale_id' => $sale_id,
@@ -33,10 +33,10 @@ class Eenvoicecrsaledocuments extends CI_Model {
     return $query;
   }
 
-  public function get($document_id) {
+  public function get_document($document_id) {
     $this->db->select('eenvoicecr_sales_documents.*');
     $this->db->from('eenvoicecr_sales_documents');
-    $this->db->where('id', $document_id);
+    $this->db->where('document_id', $document_id);
     $query = $this->db->get();
 
     if ($query->num_rows() == 1) {
@@ -50,6 +50,32 @@ class Eenvoicecrsaledocuments extends CI_Model {
       foreach ($this->db->list_fields('eenvoicecr_sales_documents') as $field) {
         $document_obj->$field = '';
       }
+
+      return $document_obj;
+    }
+  }
+
+  public function get_document_by_sale_and_code($sale_id, $document_code) {
+    $this->db->select('eenvoicecr_sales_documents.*');
+    $this->db->from('eenvoicecr_sales_documents');
+    $this->db->where(array(
+      'sale_id' => $sale_id,
+      'document_code' => $document_code,
+    ));
+    $query = $this->db->get();
+
+    if ($query->num_rows() == 1) {
+      return $query->row();
+    }
+    else {
+      //Get empty base parent object, as $item_id is NOT an item
+      $document_obj = new stdClass();
+
+      //Get all the fields from items table
+      foreach ($this->db->list_fields('eenvoicecr_sales_documents') as $field) {
+        $document_obj->$field = '';
+      }
+      $document_obj->document_id = -1;
 
       return $document_obj;
     }

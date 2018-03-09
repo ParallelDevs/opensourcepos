@@ -18,6 +18,8 @@ class E_Envoice_CR_Library {
     $this->_ci = & get_instance();
     $this->_ci->load->add_package_path(APPPATH . 'third_party/e_envoice_cr/');
     $this->_ci->load->model('Appconfig');
+    $lang_code = $this->_ci->Appconfig->get('language_code');
+    $this->_ci->load->language('e_envoice_cr', $lang_code);
   }
 
   public function init_document() {
@@ -34,6 +36,35 @@ class E_Envoice_CR_Library {
       $result = $this->sendXmlDocument();
     }
     return $result;
+  }
+
+  public function getPrintDetails($sale_id = false) {
+    $this->_ci->load->library('e_envoice_cr_document_loader');
+    $this->_ci->load->model(array(
+      'eenvoicecrprovince',
+      'eenvoicecrcanton',
+      'eenvoicecrdistrit',
+      'eenvoicecrneighborhood',
+    ));
+    $print_info = $this->_ci->e_envoice_cr_document_loader->getPrintData($sale_id);
+    if (false !== $print_info) {
+      $province = $this->_ci->Appconfig->get('e_envoice_cr_address_province');
+      $canton = $this->_ci->Appconfig->get('e_envoice_cr_address_canton');
+      $distrit = $this->_ci->Appconfig->get('e_envoice_cr_address_distrit');
+      $neighborhood = $this->_ci->Appconfig->get('e_envoice_cr_address_neighborhood');
+      
+      $print_info['document_version'] = $this->_ci->Appconfig->get('e_envoice_cr_document_version');
+      $print_info['document_legend'] = $this->_ci->Appconfig->get('e_envoice_cr_document_legend');
+      $print_info['emitter_id'] = $this->_ci->Appconfig->get('e_envoice_cr_id');
+      $print_info['emitter_province'] = $this->_ci->eenvoicecrprovince->get($province);
+      $print_info['emitter_canton'] = $this->_ci->eenvoicecrcanton->get($province, $canton);
+      $print_info['emitter_distrit'] = $this->_ci->eenvoicecrdistrit->get($province, $canton, $distrit);
+      $print_info['emitter_neighborhood'] = $this->_ci->eenvoicecrneighborhood->get($province, $canton, $distrit, $neighborhood);
+      $print_info['emitter_other'] = $this->_ci->Appconfig->get('e_envoice_cr_address_other');
+      $print_info['emitter_company_name']= $this->_ci->Appconfig->get('e_envoice_cr_commercial_name');
+    }
+
+    return $print_info;
   }
 
   protected function generateXmlDocument(&$sale_data, &$sale_type, &$client_id) {

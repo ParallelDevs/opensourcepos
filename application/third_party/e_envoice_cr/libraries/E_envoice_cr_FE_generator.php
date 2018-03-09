@@ -43,7 +43,8 @@ class E_envoice_cr_FE_generator extends E_envoice_cr_document_generator {
     }
 
     $this->xml->appendChild($root);
-    $this->xml->save($this->path . $this->file);
+    $flag = $this->xml->save($this->path . $this->file);
+    return $flag;
   }
 
   protected function initRootTag() {
