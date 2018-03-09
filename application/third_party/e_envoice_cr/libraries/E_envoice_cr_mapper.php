@@ -97,13 +97,13 @@ class E_envoice_cr_mapper {
       case Hacienda_constants::DOCUMENT_TYPE_FE:
         $key = 'e_envoice_cr_consecutive_fe';
         break;
-      case Hacienda_constants::DOCUMENT_TYPE_CODE_TE:
+      case Hacienda_constants::DOCUMENT_TYPE_TE:
         $key = 'e_envoice_cr_consecutive_te';
         break;
-      case Hacienda_constants::DOCUMENT_TYPE_CODE_NC:
+      case Hacienda_constants::DOCUMENT_TYPE_NC:
         $key = 'e_envoice_cr_consecutive_nc';
         break;
-      case Hacienda_constants::DOCUMENT_TYPE_CODE_ND:
+      case Hacienda_constants::DOCUMENT_TYPE_ND:
         $key = 'e_envoice_cr_consecutive_nd';
         break;
       default:
