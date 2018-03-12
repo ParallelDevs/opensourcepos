@@ -35,6 +35,9 @@ class E_Envoice_CR_Library {
     if ($this->signXmlDocument()) {
       $result = $this->sendXmlDocument();
     }
+    if (false !== $result) {
+      $this->_ci->e_envoice_cr_mapper->increaseDocumentNumber();
+    }
     return $result;
   }
 
@@ -52,7 +55,7 @@ class E_Envoice_CR_Library {
       $canton = $this->_ci->Appconfig->get('e_envoice_cr_address_canton');
       $distrit = $this->_ci->Appconfig->get('e_envoice_cr_address_distrit');
       $neighborhood = $this->_ci->Appconfig->get('e_envoice_cr_address_neighborhood');
-      
+
       $print_info['document_version'] = $this->_ci->Appconfig->get('e_envoice_cr_document_version');
       $print_info['document_legend'] = $this->_ci->Appconfig->get('e_envoice_cr_document_legend');
       $print_info['emitter_id'] = $this->_ci->Appconfig->get('e_envoice_cr_id');
@@ -61,7 +64,7 @@ class E_Envoice_CR_Library {
       $print_info['emitter_distrit'] = $this->_ci->eenvoicecrdistrit->get($province, $canton, $distrit);
       $print_info['emitter_neighborhood'] = $this->_ci->eenvoicecrneighborhood->get($province, $canton, $distrit, $neighborhood);
       $print_info['emitter_other'] = $this->_ci->Appconfig->get('e_envoice_cr_address_other');
-      $print_info['emitter_company_name']= $this->_ci->Appconfig->get('e_envoice_cr_commercial_name');
+      $print_info['emitter_company_name'] = $this->_ci->Appconfig->get('e_envoice_cr_commercial_name');
     }
 
     return $print_info;
@@ -90,7 +93,6 @@ class E_Envoice_CR_Library {
     $signed = $this->_ci->e_envoice_cr_document_signer->signXMLDocument($xml_path, $xml_document);
     $signed_document = $this->_ci->e_envoice_cr_document_signer->getSignedXMLDocument();
     if ($signed) {
-      $this->_ci->e_envoice_cr_mapper->increaseDocumentNumber();
       return $this->_xml_generator->replaceXmlDocument($signed_document);
     }
 

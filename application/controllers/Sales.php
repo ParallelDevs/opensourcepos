@@ -15,7 +15,7 @@ class Sales extends Secure_Controller
 		$this->load->library('barcode_lib');
 		$this->load->library('email_lib');
 		$this->load->library('token_lib');
-    $this->load->library('e_envoice_cr_lib');    
+    $this->load->library('e_envoice_cr_lib');
 	}
 
 	public function index()
@@ -750,11 +750,15 @@ class Sales extends Secure_Controller
 
       if(SALE_TYPE_POS === $sale_type ){
         $sale_document = $this->e_envoice_cr_lib->sendSaleDocument($data, $sale_type, $customer_id);
-      }else {
+        if(false === $sale_document){
+          $data['sale_id_num'] = -1;
+        } else{
+          $data['sale_id_num'] = $this->Sale->save($sale_id, $data['sale_status'], $data['cart'], $customer_id, $employee_id, $data['comments'], $invoice_number, $work_order_number, $quote_number, $sale_type, $data['payments'], $data['dinner_table'], $data['taxes']);
+        }
+      } else {
         $sale_document = false;
+        $data['sale_id_num'] = $this->Sale->save($sale_id, $data['sale_status'], $data['cart'], $customer_id, $employee_id, $data['comments'], $invoice_number, $work_order_number, $quote_number, $sale_type, $data['payments'], $data['dinner_table'], $data['taxes']);
       }
-
-			$data['sale_id_num'] = $this->Sale->save($sale_id, $data['sale_status'], $data['cart'], $customer_id, $employee_id, $data['comments'], $invoice_number, $work_order_number, $quote_number, $sale_type, $data['payments'], $data['dinner_table'], $data['taxes']);
 
 			$data['sale_id'] = 'POS ' . $data['sale_id_num'];
 

@@ -80,20 +80,7 @@ class E_envoice_cr_communicator {
         break;
       default :
         break;
-    }
-    $limit = $response->getHeader('X-Ratelimit-Limit');
-    $remain = $response->getHeader('X-Ratelimit-Remaining');
-    $reset = $response->getHeader('X-Ratelimit-Reset');
-    $debug_data = array(
-      'limit' => reset($limit),
-      'remain' => reset($remain),
-      'reset' => reset($reset),
-    );
-
-    $debug_data['reset_date_utc'] = gmdate('Y/m/j H:i:s', $debug_data['reset']);
-    date_default_timezone_set("America/Costa_Rica");
-    $debug_data['reset_date_cr'] = date('Y/m/j H:i:s', $debug_data['reset']);
-    log_message('debug', var_export($debug_data,true));
+    }    
   }
 
   /**

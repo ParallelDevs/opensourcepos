@@ -244,9 +244,10 @@ class E_envoice_cr_mapper {
           array_push($payments, '99');
           list($type, $id) = explode(":", $pay_type['payment_type']);
           $amount = $pay_type['payment_amount'];
+          $text = "Medio de pago: $type con valor de $amount";
           $comment = array(
             'code' => '99',
-            'text' => "Medio de pago: $type con valor de $amount",
+            'text' => utf8_encode($text),
           );
           array_push($this->_comments, $comment);
           break;
@@ -267,11 +268,14 @@ class E_envoice_cr_mapper {
 
   protected function getOtros(&$data) {
     $others = array();
+    $text = '';
     if (!empty($data['comments'])) {
-      array_push($others, $data['comments']);
+      $text = utf8_encode($data['comments']);
+      array_push($others, $text);
     }
     if (array_key_exists('customer_comments', $data)) {
-      array_push($others, $data["customer_comments"]);
+      $text = utf8_encode($data['customer_comments']);
+      array_push($others, $text);
     }
     foreach ($this->_comments as $comment) {
       array_push($others, $comment);
@@ -296,9 +300,9 @@ class E_envoice_cr_mapper {
       $otras_senas = substr($otras_senas, 0, 160);
     }
 
-    $this->_emitter['name'] = $name;
+    $this->_emitter['name'] = utf8_encode($name);
     $this->_emitter['id'] = array('type' => $id_type, 'number' => $id);
-    $this->_emitter['commercialName'] = $commercial_name;
+    $this->_emitter['commercialName'] = utf8_encode($commercial_name);
     $this->_emitter['email'] = $email;
     $this->_emitter['phone'] = $this->mapPhoneNumber($phone);
     $this->_emitter['fax'] = $this->mapPhoneNumber($fax);
@@ -307,7 +311,7 @@ class E_envoice_cr_mapper {
       'cant' => format_document_number($canton, 2),
       'dist' => format_document_number($distrit, 2),
       'barr' => format_document_number($neighborhood, 2),
-      'other' => $otras_senas,
+      'other' => utf8_encode($otras_senas),
     );
   }
 
@@ -320,9 +324,9 @@ class E_envoice_cr_mapper {
     $name = $data['first_name'] . ' ' . $data['last_name'];
     $commercial_name = strcasecmp($name, $data['customer']) != 0 ? $data['customer'] : '';
     $email = $data['customer_email'];
-    $this->_client['name'] = $name;
+    $this->_client['name'] = utf8_encode($name);
     $this->_client['id'] = array();
-    $this->_client['commercialName'] = $commercial_name;
+    $this->_client['commercialName'] = utf8_encode($commercial_name);
     $this->_client['email'] = $email;
     $this->_client['phone'] = $this->mapPhoneNumber($customer->phone_number);
     $this->_client['fax'] = array();
@@ -356,7 +360,7 @@ class E_envoice_cr_mapper {
     $customer_discount = 0.0;
     if ($this->_ci->Customer->exists($client_id)) {
       $customer_discount = $this->_ci->Customer->get_info($client_id)->discount_percent;
-    }
+    }    
 
     $line = array(
       'line' => $item['line'],
@@ -364,7 +368,7 @@ class E_envoice_cr_mapper {
       'detail' => $item['name'],
       'price' => round($price, 5),
       'code' => array('type' => '04', 'number' => $item['item_number']),
-      'unit' => 'Unid',
+      'unit' => ('0' == $item['stock_type'] ? 'Unid' : 'Sp'),
       'total' => round($total_amount, 5),
       'subtotal' => round($subtotal, 5),
       'line_total_amount' => round($line_total_amount, 5),
@@ -374,7 +378,7 @@ class E_envoice_cr_mapper {
 
     if ($discount_amount <> 0.0) {
       $line['discount']['amount'] = round($discount_amount, 5);
-      $line['discount']['reason'] = (0.0 <> $customer_discount) ? 'Descuento a cliente' : 'Descuento general';
+      $line['discount']['reason'] = (0.0 <> $customer_discount) ? utf8_encode('Descuento a cliente') : utf8_encode('Descuento general');
     }
     $this->addLineToSummary($item['stock_type'], $discount_amount, $tax_amount, $total_amount);
     return $line;
