@@ -3,6 +3,15 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url() . 'css/invoice_email.css';?>"/>
+  <?php if(isset($e_envoice_cr_data)):?>
+  <style>
+    #document_version {text-align: center; position: relative; top: 0; padding-bottom: 0; margin-bottom: 0;}
+    #terms {page-break-before: auto; }
+    .footer {display: block; text-align: center; page-break-before: auto;}
+    #image {height: auto !important; }
+    #header {background: none !important; color: #222222 !important;}
+  </style>
+  <?php endif;?>
 </head>
 
 <body>
@@ -19,6 +28,11 @@
 
 <div id="page-wrap">
 	<div id="header"><?php echo $this->lang->line('sales_invoice'); ?></div>
+  <?php if(isset($e_envoice_cr_data)):?>
+  <div id="document_version">
+    <?php echo $this->lang->line('e_envoice_cr_document_version').': '.$e_envoice_cr_data['document_version'];?>
+  </div>
+  <?php endif;?>
 	<table id="info">
 		<tr>
 			<td id="logo">
@@ -37,6 +51,24 @@
 		<tr>
 			<td id="company-title">
 				<pre><?php echo $this->config->item('company'); ?></pre>
+        <?php if(isset($e_envoice_cr_data)):?>
+        <div>
+        <?php echo $this->lang->line('e_envoice_cr_document_id').': '.$e_envoice_cr_data['emitter_id'];?>
+        </div>
+        <div>
+        <?php echo $this->lang->line('e_envoice_cr_commercial_name').': '.$e_envoice_cr_data['emitter_company_name'];?>
+        </div>
+        <div><?php echo $this->config->item('email'); ?></div>
+        <div>
+          <?php
+              $address = ucwords(strtolower($e_envoice_cr_data['emitter_province'])).', ';
+              $address .= ucwords(strtolower($e_envoice_cr_data['emitter_canton'])).', ';
+              $address .= ucwords(strtolower($e_envoice_cr_data['emitter_distrit'])).', ';
+              $address .= ucwords(strtolower($e_envoice_cr_data['emitter_neighborhood']));
+              echo $address;
+          ?>
+        </div>
+        <?php endif;?>
 				<pre><?php echo $company_info; ?></pre>
 			</td>
 			<td id="meta">
@@ -45,9 +77,19 @@
 					<td class="meta-head"><?php echo $this->lang->line('sales_invoice_number');?> </td>
 					<td><div><?php echo $invoice_number; ?></div></td>
 				</tr>
+        <?php if(isset($e_envoice_cr_data)):?>
+        <tr>
+          <td class="meta-head"><?php echo $this->lang->line($e_envoice_cr_data['lang_document_name']);?></td>
+          <td><?php echo $e_envoice_cr_data['document_consecutive']; ?></td>
+        </tr>
+        <tr>
+          <td class="meta-head"><?php echo $this->lang->line('e_envoice_cr_document_sale_type');?></td>
+          <td><?php echo $this->lang->line($e_envoice_cr_data['lang_document_sale_type']);?></td>
+        </tr>
+        <?php endif;?>
 				<tr>
 					<td class="meta-head"><?php echo $this->lang->line('common_date'); ?></td>
-					<td><div><?php echo $transaction_date; ?></div></td>
+					<td><div><?php echo $transaction_time; ?></div></td>
 				</tr>
 				<?php
 				if($amount_due > 0)
@@ -121,6 +163,47 @@
 			<td colspan="2" class="total-line"><?php echo $this->lang->line('sales_total'); ?></td>
 			<td id="total" class="total-value"><?php echo to_currency($total); ?></td>
 		</tr>
+
+    <?php
+		$only_sale_check = FALSE;
+		$show_giftcard_remainder = FALSE;
+		foreach($payments as $payment_id=>$payment)
+		{
+			$only_sale_check |= $payment['payment_type'] == $this->lang->line('sales_check');
+			$splitpayment = explode(':', $payment['payment_type']);
+			$show_giftcard_remainder |= $splitpayment[0] == $this->lang->line('sales_giftcard');
+		?>
+			<tr>
+				<td colspan="4" class="blank"> </td>
+				<td colspan="2" class="total-line"><?php echo $splitpayment[0]; ?></td>
+				<td class="total-value"><?php echo to_currency( $payment['payment_amount'] * -1 ); ?></td>
+			</tr>
+		<?php
+		}
+
+		if(isset($cur_giftcard_value) && $show_giftcard_remainder)
+		{
+		?>
+			<tr>
+				<td colspan="4" class="blank"> </td>
+				<td colspan="2" class="total-line"><?php echo $this->lang->line('sales_giftcard_balance'); ?></td>
+				<td class="total-value"><?php echo to_currency($cur_giftcard_value); ?></td>
+			</tr>
+			<?php
+		}
+
+		if(!empty($payments))
+		{
+		?>
+		<tr>
+			<td colspan="4" class="blank"> </td>
+			<td colspan="2" class="total-line"><?php echo $this->lang->line($amount_change >= 0 ? ($only_sale_check ? 'sales_check_balance' : 'sales_change_due') : 'sales_amount_due') ; ?></textarea></td>
+			<td class="total-value"><?php echo to_currency($amount_change); ?></td>
+		</tr>
+		<?php
+		}
+		?>
+
 	</table>
 
 	<div id="terms">
@@ -136,6 +219,12 @@
 			<?php echo $sale_id; ?>
 		</div>
 	</div>
+  <?php if(isset($e_envoice_cr_data)):?>
+  <div class="footer">
+    <div id="document_key"><?php echo $this->lang->line('e_envoice_cr_document_key').': '.$e_envoice_cr_data['document_key'];?></div>
+    <div id="document_legend"><?php echo $e_envoice_cr_data['document_legend'];?></div>
+  </div>
+<?php endif;?>
 </div>
 
 </body>

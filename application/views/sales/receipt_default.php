@@ -30,8 +30,7 @@
     </div>
     <div id="company_commercial_name">
       <?php echo $this->lang->line('e_envoice_cr_commercial_name').': '.$e_envoice_cr_data['emitter_company_name'];?>
-    </div>
-    
+    </div>    
     <?php endif;?>
     
 		<div id="company_address"><?php echo nl2br($this->config->item('address')); ?></div>
@@ -71,6 +70,7 @@
     
     <?php if(isset($e_envoice_cr_data)):?>
     <div id="document_number"><?php echo $this->lang->line($e_envoice_cr_data['lang_document_name']).": ".$e_envoice_cr_data['document_consecutive']; ?></div>
+    <div id="document_sale_type"><?php echo $this->lang->line($e_envoice_cr_data['lang_document_sale_type']);?></div>
 		<?php endif;?>
     
     <?php
@@ -234,7 +234,7 @@
 		<?php echo $sale_id; ?>
 	</div>
   <?php if(isset($e_envoice_cr_data)):?>
-  <div id="document_legend" style="text-align: center;"><?php echo $this->lang->line('e_envoice_cr_document_key').': '.$e_envoice_cr_data['document_key'];?></div>
+  <div id="document_key" style="text-align: center;"><?php echo $this->lang->line('e_envoice_cr_document_key').': '.$e_envoice_cr_data['document_key'];?></div>
   <div id="document_legend" style="text-align: center;"><?php echo $e_envoice_cr_data['document_legend'];?></div>
   <?php endif;?>
 </div>

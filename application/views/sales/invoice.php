@@ -49,7 +49,12 @@ $(document).ready(function()
 ?>
 
 <div id="page-wrap">
-	<div id="header"><?php echo $this->lang->line('sales_invoice'); ?></div>
+	<div id="header"><?php echo $this->lang->line('sales_invoice'); ?></div>  
+  <?php if(isset($e_envoice_cr_data)):?>
+  <div id="document_version">
+    <?php echo $this->lang->line('e_envoice_cr_document_version').': '.$e_envoice_cr_data['document_version'];?>
+  </div>
+  <?php endif;?>  
 	<div id="block1">
 		<div id="customer-title">
 			<?php
@@ -72,27 +77,51 @@ $(document).ready(function()
 			}
 			?>
 			<div>&nbsp</div>
-			<?php
-			if($this->Appconfig->get('receipt_show_company_name'))
-			{
-			?>
-				<div id="company_name"><?php echo $this->config->item('company'); ?></div>
-			<?php
-			}
-			?>
+
+			<div id="company_name"><?php echo $this->config->item('company'); ?></div>
+
 		</div>
 	</div>
 
 	<div id="block2">
+    <?php if(isset($e_envoice_cr_data)):?>
+    <div id="company_id">
+    <?php echo $this->lang->line('e_envoice_cr_document_id').': '.$e_envoice_cr_data['emitter_id'];?>
+    </div>
+    <div id="company_commercial_name">
+    <?php echo $this->lang->line('e_envoice_cr_commercial_name').': '.$e_envoice_cr_data['emitter_company_name'];?>
+    </div>
+    <div id="company_email"><?php echo $this->config->item('email'); ?></div>
+    <div id="company_commercial_address">
+      <?php
+          $address = ucwords(strtolower($e_envoice_cr_data['emitter_province'])).', ';
+          $address .= ucwords(strtolower($e_envoice_cr_data['emitter_canton'])).', ';
+          $address .= ucwords(strtolower($e_envoice_cr_data['emitter_distrit'])).', ';
+          $address .= ucwords(strtolower($e_envoice_cr_data['emitter_neighborhood']));
+          echo $address;
+      ?>
+    </div>
+    <?php endif;?>
 		<textarea id="company-title" rows="5" cols="35"><?php echo $company_info ?></textarea>
+
 		<table id="meta">
 			<tr>
 				<td class="meta-head"><?php echo $this->lang->line('sales_invoice_number');?> </td>
 				<td><textarea rows="5" cols="6"><?php echo $invoice_number; ?></textarea></td>
 			</tr>
+      <?php if(isset($e_envoice_cr_data)):?>
+      <tr>
+				<td class="meta-head"><?php echo $this->lang->line($e_envoice_cr_data['lang_document_name']);?></td>
+				<td><?php echo $e_envoice_cr_data['document_consecutive']; ?></td>
+			</tr>
+      <tr>
+        <td class="meta-head"><?php echo $this->lang->line('e_envoice_cr_document_sale_type');?></td>
+        <td><?php echo $this->lang->line($e_envoice_cr_data['lang_document_sale_type']);?></td>
+      </tr>
+      <?php endif;?>
 			<tr>
 				<td class="meta-head"><?php echo $this->lang->line('common_date'); ?></td>
-				<td><textarea rows="5" cols="6"><?php echo $transaction_date; ?></textarea></td>
+				<td><textarea rows="5" cols="15"><?php echo $transaction_time; ?></textarea></td>
 			</tr>
 			<tr>
 				<td class="meta-head"><?php echo $this->lang->line('sales_amount_due'); ?></td>
@@ -223,6 +252,10 @@ $(document).ready(function()
 			<img src='data:image/png;base64,<?php echo $barcode; ?>' /><br>
 			<?php echo $sale_id; ?>
 		</div>
+    <?php if(isset($e_envoice_cr_data)):?>
+    <div id="document_key" style="text-align: center;"><?php echo $this->lang->line('e_envoice_cr_document_key').': '.$e_envoice_cr_data['document_key'];?></div>
+    <div id="document_legend" style="text-align: center;"><?php echo $e_envoice_cr_data['document_legend'];?></div>
+    <?php endif;?>
 	</div>
 </div>
 

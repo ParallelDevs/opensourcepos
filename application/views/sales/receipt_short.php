@@ -1,4 +1,4 @@
-<?php 
+<?php
 	// Temporarily loads the system language for _lang to print invoice in the system language rather than user defined.
 	load_language(TRUE,array('customers','sales','employees'));
 ?>
@@ -16,18 +16,42 @@
 		}
 		?>
 
-		<?php
-		if($this->config->item('receipt_show_company_name'))
-		{
-		?>
-			<div id="company_name"><?php echo $this->config->item('company'); ?></div>
-		<?php
-		}
-		?>
+    <?php if(isset($e_envoice_cr_data)):?>
+    <div id="document_version">
+      <?php echo $this->lang->line('e_envoice_cr_document_version').': '.$e_envoice_cr_data['document_version'];?>
+    </div>
+    <?php endif;?>
+
+		<div id="company_name"><?php echo $this->config->item('company'); ?></div>
+
+    <?php if(isset($e_envoice_cr_data)):?>
+    <div id="company_id">
+      <?php echo $this->lang->line('e_envoice_cr_document_id').': '.$e_envoice_cr_data['emitter_id'];?>
+    </div>
+    <div id="company_commercial_name">
+      <?php echo $this->lang->line('e_envoice_cr_commercial_name').': '.$e_envoice_cr_data['emitter_company_name'];?>
+    </div>
+    <?php endif;?>
 
 		<div id="company_address"><?php echo nl2br($this->config->item('address')); ?></div>
+    <?php if(isset($e_envoice_cr_data)):?>
+    <div id="company_commercial_address">
+      <?php
+          $address = ucwords(strtolower($e_envoice_cr_data['emitter_province'])).', ';
+          $address .= ucwords(strtolower($e_envoice_cr_data['emitter_canton'])).', ';
+          $address .= ucwords(strtolower($e_envoice_cr_data['emitter_distrit'])).', ';
+          $address .= ucwords(strtolower($e_envoice_cr_data['emitter_neighborhood']));
+          echo $address;
+      ?>
+    </div>
+    <?php endif;?>
+    <div id="company_email"><?php echo $this->config->item('email'); ?></div>
 		<div id="company_phone"><?php echo $this->config->item('phone'); ?></div>
-		<div id="sale_receipt"><?php echo $this->lang->line('sales_receipt'); ?></div>
+		<?php if(isset($e_envoice_cr_data)):?>
+      <div id="document_type"><?php echo $this->lang->line($e_envoice_cr_data['lang_document_name']); ?></div>
+    <?php else:?>
+    <div id="sale_receipt"><?php echo $this->lang->line('sales_receipt'); ?></div>
+    <?php endif;?>
 		<div id="sale_time"><?php echo $transaction_time ?></div>
 	</div>
 
@@ -42,6 +66,11 @@
 		?>
 
 		<div id="sale_id"><?php echo $this->lang->line('sales_id').": ".$sale_id; ?></div>
+
+    <?php if(isset($e_envoice_cr_data)):?>
+    <div id="document_number"><?php echo $this->lang->line($e_envoice_cr_data['lang_document_name']).": ".$e_envoice_cr_data['document_consecutive']; ?></div>
+    <div id="document_sale_type"><?php echo $this->lang->line($e_envoice_cr_data['lang_document_sale_type']);?></div>
+		<?php endif;?>
 
 		<?php
 		if(!empty($invoice_number))
@@ -194,4 +223,8 @@
 		<img src='data:image/png;base64,<?php echo $barcode; ?>' /><br>
 		<?php echo $sale_id; ?>
 	</div>
+  <?php if(isset($e_envoice_cr_data)):?>
+  <div id="document_key" style="text-align: center;"><?php echo $this->lang->line('e_envoice_cr_document_key').': '.$e_envoice_cr_data['document_key'];?></div>
+  <div id="document_legend" style="text-align: center;"><?php echo $e_envoice_cr_data['document_legend'];?></div>
+  <?php endif;?>
 </div>

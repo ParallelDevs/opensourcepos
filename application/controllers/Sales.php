@@ -627,9 +627,14 @@ class Sales extends Secure_Controller
 				$sale_type = SALE_TYPE_INVOICE;
 
         $sale_document = $this->e_envoice_cr_lib->sendSaleDocument($data, $sale_type, $customer_id);
-
-				// Save the data to the sales table
-				$data['sale_id_num'] = $this->Sale->save($sale_id, $data['sale_status'], $data['cart'], $customer_id, $employee_id, $data['comments'], $invoice_number, $work_order_number, $quote_number, $sale_type, $data['payments'], $data['dinner_table'], $data['taxes']);
+        
+        if(false === $sale_document){
+          $data['sale_id_num'] = -1;
+        } else { 
+          // Save the data to the sales table
+          $data['sale_id_num'] = $this->Sale->save($sale_id, $data['sale_status'], $data['cart'], $customer_id, $employee_id, $data['comments'], $invoice_number, $work_order_number, $quote_number, $sale_type, $data['payments'], $data['dinner_table'], $data['taxes']);          
+        }				
+				
 				$data['sale_id'] = 'POS ' . $data['sale_id_num'];
 
 				// Resort and filter cart lines for printing
@@ -647,6 +652,10 @@ class Sales extends Secure_Controller
             $sale_document['sale_id'] = $data['sale_id_num'];
             $this->load->model('Eenvoicecrsaledocuments');
             $this->Eenvoicecrsaledocuments->save($sale_document);
+            $e_envoice_cr_print = $this->e_envoice_cr_lib->getPrintDetails($data['sale_id_num'], $data);
+            if(false !== $e_envoice_cr_print){
+              $data['e_envoice_cr_data'] = $e_envoice_cr_print;
+            }
           }
 
 					$data['barcode'] = $this->barcode_lib->generate_receipt_barcode($data['sale_id']);
@@ -775,6 +784,10 @@ class Sales extends Secure_Controller
           $sale_document['sale_id'] = $data['sale_id_num'];
           $this->load->model('Eenvoicecrsaledocuments');
           $this->Eenvoicecrsaledocuments->save($sale_document);
+          $e_envoice_cr_print = $this->e_envoice_cr_lib->getPrintDetails($data['sale_id_num'], $data);
+          if(false !== $e_envoice_cr_print){
+            $data['e_envoice_cr_data'] = $e_envoice_cr_print;
+          }
         }
 
 				$data['barcode'] = $this->barcode_lib->generate_receipt_barcode($data['sale_id']);
@@ -791,6 +804,10 @@ class Sales extends Secure_Controller
 	public function send_pdf($sale_id, $type = 'invoice')
 	{
 		$sale_data = $this->_load_sale_data($sale_id);
+    $e_envoice_cr_print = $this->e_envoice_cr_lib->getPrintDetails($sale_id, $sale_data);
+    if(false !== $e_envoice_cr_print){
+      $sale_data['e_envoice_cr_data'] = $e_envoice_cr_print;
+    }
 
 		$result = FALSE;
 		$message = $this->lang->line('sales_invoice_no_email');
@@ -830,6 +847,10 @@ class Sales extends Secure_Controller
 	public function send_receipt($sale_id)
 	{
 		$sale_data = $this->_load_sale_data($sale_id);
+    $e_envoice_cr_print = $this->e_envoice_cr_lib->getPrintDetails($sale_id, $sale_data);
+    if(false !== $e_envoice_cr_print){
+      $sale_data['e_envoice_cr_data'] = $e_envoice_cr_print;
+    }
 
 		$result = FALSE;
 		$message = $this->lang->line('sales_receipt_no_email');
@@ -1116,9 +1137,9 @@ class Sales extends Secure_Controller
 	public function receipt($sale_id)
 	{
 		$data = $this->_load_sale_data($sale_id);
-    $e_envoice_cr_print=$this->e_envoice_cr_lib->getPrintDetails($sale_id);
-    if(false !==$e_envoice_cr_print){
-      $data['e_envoice_cr_data']=$e_envoice_cr_print;
+    $e_envoice_cr_print = $this->e_envoice_cr_lib->getPrintDetails($sale_id, $data);
+    if(false !== $e_envoice_cr_print){
+      $data['e_envoice_cr_data'] = $e_envoice_cr_print;
     }
 		$this->load->view('sales/receipt', $data);
 		$this->sale_lib->clear_all();
@@ -1127,6 +1148,10 @@ class Sales extends Secure_Controller
 	public function invoice($sale_id)
 	{
 		$data = $this->_load_sale_data($sale_id);
+    $e_envoice_cr_print = $this->e_envoice_cr_lib->getPrintDetails($sale_id, $data);
+    if(false !== $e_envoice_cr_print){
+      $data['e_envoice_cr_data'] = $e_envoice_cr_print;
+    }
 		$this->load->view('sales/invoice', $data);
 		$this->sale_lib->clear_all();
 	}
