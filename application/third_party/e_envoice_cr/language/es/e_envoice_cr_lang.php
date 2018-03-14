@@ -23,4 +23,7 @@ $lang["e_envoice_cr_document_TE"] = "Tiquete Electrónico";
 $lang["e_envoice_cr_document_NC"] = "Nota de Crédito";
 $lang["e_envoice_cr_document_ND"] = "Nota de Débito";
 $lang["e_envoice_cr_document_key"] = "Clave Númerica";
-
+$lang["e_envoice_cr_document_sale_type"] = "Tipo de Venta";
+$lang["e_envoice_cr_document_cash_sale"] = "Venta de Contado";
+$lang["e_envoice_cr_document_credit_sale"] = "Venta a Crédito";
+$lang["e_envoice_cr_document_other_sale"] = "Otro tipo de Venta";

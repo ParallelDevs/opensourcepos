@@ -23,4 +23,7 @@ $lang["e_envoice_cr_document_TE"] = "Electronic Ticket";
 $lang["e_envoice_cr_document_NC"] = "Credit Note";
 $lang["e_envoice_cr_document_ND"] = "Debit Note";
 $lang["e_envoice_cr_document_key"] = "Numeric Key";
-
+$lang["e_envoice_cr_document_sale_type"] = "Sale Type";
+$lang["e_envoice_cr_document_cash_sale"] = "Cash Sale";
+$lang["e_envoice_cr_document_credit_sale"] = "Credit Sale";
+$lang["e_envoice_cr_document_other_sale"] = "Other Sale Type";
