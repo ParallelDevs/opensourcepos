@@ -245,10 +245,7 @@ class E_envoice_cr_mapper {
           list($type, $id) = explode(":", $pay_type['payment_type']);
           $amount = $pay_type['payment_amount'];
           $text = "Medio de pago: $type con valor de $amount";
-          $comment = array(
-            'code' => '99',
-            'text' => utf8_encode($text),
-          );
+          $comment = utf8_encode($text);
           array_push($this->_comments, $comment);
           break;
       }
@@ -360,7 +357,7 @@ class E_envoice_cr_mapper {
     $customer_discount = 0.0;
     if ($this->_ci->Customer->exists($client_id)) {
       $customer_discount = $this->_ci->Customer->get_info($client_id)->discount_percent;
-    }    
+    }
 
     $line = array(
       'line' => $item['line'],

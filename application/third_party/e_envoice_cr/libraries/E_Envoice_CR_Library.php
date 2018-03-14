@@ -41,30 +41,16 @@ class E_Envoice_CR_Library {
     return $result;
   }
 
-  public function getPrintDetails($sale_id = false) {
+  public function getPrintDetails($sale_id = false, $sale_data = false) {
     $this->_ci->load->library('e_envoice_cr_document_loader');
-    $this->_ci->load->model(array(
-      'eenvoicecrprovince',
-      'eenvoicecrcanton',
-      'eenvoicecrdistrit',
-      'eenvoicecrneighborhood',
-    ));
+
     $print_info = $this->_ci->e_envoice_cr_document_loader->getPrintData($sale_id);
     if (false !== $print_info) {
-      $province = $this->_ci->Appconfig->get('e_envoice_cr_address_province');
-      $canton = $this->_ci->Appconfig->get('e_envoice_cr_address_canton');
-      $distrit = $this->_ci->Appconfig->get('e_envoice_cr_address_distrit');
-      $neighborhood = $this->_ci->Appconfig->get('e_envoice_cr_address_neighborhood');
-
+      $this->getEmitterPrintInformation($print_info);
       $print_info['document_version'] = $this->_ci->Appconfig->get('e_envoice_cr_document_version');
       $print_info['document_legend'] = $this->_ci->Appconfig->get('e_envoice_cr_document_legend');
-      $print_info['emitter_id'] = $this->_ci->Appconfig->get('e_envoice_cr_id');
-      $print_info['emitter_province'] = $this->_ci->eenvoicecrprovince->get($province);
-      $print_info['emitter_canton'] = $this->_ci->eenvoicecrcanton->get($province, $canton);
-      $print_info['emitter_distrit'] = $this->_ci->eenvoicecrdistrit->get($province, $canton, $distrit);
-      $print_info['emitter_neighborhood'] = $this->_ci->eenvoicecrneighborhood->get($province, $canton, $distrit, $neighborhood);
-      $print_info['emitter_other'] = $this->_ci->Appconfig->get('e_envoice_cr_address_other');
-      $print_info['emitter_company_name'] = $this->_ci->Appconfig->get('e_envoice_cr_commercial_name');
+      $print_info['lang_document_sale_type'] = (true == $sale_data['payments_cover_total']) ?
+          'e_envoice_cr_document_cash_sale' : 'e_envoice_cr_document_other_sale';
     }
 
     return $print_info;
@@ -138,6 +124,26 @@ class E_Envoice_CR_Library {
       $document_info['receiver']['id_number'] = $client['id']['number'];
     }
     return $document_info;
+  }
+
+  protected function getEmitterPrintInformation(&$print_info) {
+    $this->_ci->load->model(array(
+      'eenvoicecrprovince',
+      'eenvoicecrcanton',
+      'eenvoicecrdistrit',
+      'eenvoicecrneighborhood',
+    ));
+    $province = $this->_ci->Appconfig->get('e_envoice_cr_address_province');
+    $canton = $this->_ci->Appconfig->get('e_envoice_cr_address_canton');
+    $distrit = $this->_ci->Appconfig->get('e_envoice_cr_address_distrit');
+    $neighborhood = $this->_ci->Appconfig->get('e_envoice_cr_address_neighborhood');
+    $print_info['emitter_id'] = $this->_ci->Appconfig->get('e_envoice_cr_id');
+    $print_info['emitter_province'] = $this->_ci->eenvoicecrprovince->get($province);
+    $print_info['emitter_canton'] = $this->_ci->eenvoicecrcanton->get($province, $canton);
+    $print_info['emitter_distrit'] = $this->_ci->eenvoicecrdistrit->get($province, $canton, $distrit);
+    $print_info['emitter_neighborhood'] = $this->_ci->eenvoicecrneighborhood->get($province, $canton, $distrit, $neighborhood);
+    $print_info['emitter_other'] = $this->_ci->Appconfig->get('e_envoice_cr_address_other');
+    $print_info['emitter_company_name'] = $this->_ci->Appconfig->get('e_envoice_cr_commercial_name');
   }
 
 }
