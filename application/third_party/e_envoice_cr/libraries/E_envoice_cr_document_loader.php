@@ -34,6 +34,8 @@ class E_envoice_cr_document_loader {
           'document_key' => $document->document_key,
           'document_consecutive' => $document->document_consecutive,
           'lang_document_name' => 'e_envoice_cr_document_'.$document_type,
+          'sent_xml_file'=>$document->sent_xml,
+          'received_xml_file'=>$document->received_xml,
         );
       }
     }

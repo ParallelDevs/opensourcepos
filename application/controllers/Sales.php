@@ -831,7 +831,12 @@ class Sales extends Secure_Controller
 			$filename = sys_get_temp_dir() . '/' . $this->lang->line("sales_$type") . '-' . str_replace('/', '-', $number) . '.pdf';
 			if(file_put_contents($filename, pdf_create($html)) !== FALSE)
 			{
-				$result = $this->email_lib->sendEmail($to, $subject, $text, $filename);
+        $attachments = array($filename);
+        if(false !== $e_envoice_cr_print){
+          array_push($attachments, $e_envoice_cr_print['sent_xml_file']);
+          array_push($attachments, $e_envoice_cr_print['received_xml_file']);
+        }
+				$result = $this->email_lib->sendEmail($to, $subject, $text, $attachments);
 			}
 
 			$message = $this->lang->line($result ? "sales_" . $type . "_sent" : "sales_" . $type . "_unsent") . ' ' . $to;
