@@ -132,15 +132,15 @@ class E_Envoice_CR_Library {
 		$signed_document = $this->_xml_generator->getFile();
 		$document_info = $this->getSaleDocumentPayload();
 		$this->_ci->load->library('e_envoice_cr_communicator');
-		$this->_ci->e_envoice_cr_communicator->sendDocument($document_info, $xml_path . $signed_document);
+		$this->_ci->e_envoice_cr_communicator->send_document($document_info, $xml_path . $signed_document);
 		$doc_type = $this->_ci->e_envoice_cr_mapper->getDocumentType();
 		$consecutive = $this->_ci->e_envoice_cr_mapper->getDocumentConsecutive();
 		$sale_document_info = array(
 			'document_key' => $document_info['key'],
 			'document_consecutive' => $consecutive,
 			'document_code' => Hacienda_constants::get_code_by_document_type($doc_type),
-			'document_status' => $this->_ci->e_envoice_cr_communicator->getStatus(),
-			'document_url' => $this->_ci->e_envoice_cr_communicator->getURLDocument(),
+			'document_status' => $this->_ci->e_envoice_cr_communicator->get_status(),
+			'document_url' => $this->_ci->e_envoice_cr_communicator->get_url_document(),
 			'sent_xml' => $xml_path . $signed_document,
 		);
 		return $sale_document_info;

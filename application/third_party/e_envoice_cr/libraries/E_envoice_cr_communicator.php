@@ -35,33 +35,33 @@ class E_envoice_cr_communicator {
 		$this->_refresh_token = '';
 	}
 
-	public function getURLDocument()
+	public function get_url_document()
 	{
 		return $this->_document_url;
 	}
 
-	public function getErrorMessage()
+	public function get_error_message()
 	{
 		return $this->_message;
 	}
 
-	public function getStatus()
+	public function get_status()
 	{
 		return $this->_document_status;
 	}
 
-	public function sendDocument(&$document_info, $xml_file)
+	public function send_document(&$document_info, $xml_file)
 	{
 		$this->login();
-		$url = $this->getAPIUrl() . 'recepcion';
-		$client = $this->getConnectionClient();
-		$data = $this->getDocumentPayload($document_info, $xml_file);
+		$url = $this->get_api_url() . 'recepcion';
+		$client = $this->get_connection_client();
+		$data = $this->get_document_payload($document_info, $xml_file);
 		try
 		{
 			$response = $client->post($url, [
 				RequestOptions::JSON => $data,
 			]);
-			$this->processSendDocumentResponse($response);
+			$this->process_send_document_response($response);
 		}
 		catch (GuzzleHttp\Exception\RequestException $e_req)
 		{
@@ -72,7 +72,7 @@ class E_envoice_cr_communicator {
 		$this->logout();
 	}
 
-	protected function processSendDocumentResponse(&$response)
+	protected function process_send_document_response(&$response)
 	{
 		$code = $response->getStatusCode();
 		switch ($code) {
@@ -107,9 +107,9 @@ class E_envoice_cr_communicator {
 	{
 		$username = $this->_ci->Appconfig->get('e_envoice_cr_username');
 		$password = $this->_ci->Appconfig->get('e_envoice_cr_password');
-		$url = $this->getAuthenticationURL();
+		$url = $this->get_authentication_url();
 		$url .= '/token';
-		$client_id = $this->getAuthenticationClientId();
+		$client_id = $this->get_authentication_client_id();
 
 		$client = new Client(array(
 			'http_errors' => false,
@@ -147,10 +147,10 @@ class E_envoice_cr_communicator {
 
 	protected function logout()
 	{
-		$url = $this->getAuthenticationURL();
+		$url = $this->get_authentication_url();
 		$url .= '/logout';
-		$client = $this->getConnectionClient();
-		$client_id = $this->getAuthenticationClientId();
+		$client = $this->get_connection_client();
+		$client_id = $this->get_authentication_client_id();
 		try
 		{
 			$request = $client->request('POST', $url, array(
@@ -170,7 +170,7 @@ class E_envoice_cr_communicator {
 		$this->_refresh_token = '';
 	}
 
-	protected function getAuthenticationURL()
+	protected function get_authentication_url()
 	{
 		$environment = $this->_ci->Appconfig->get('e_envoice_cr_env');
 		if ($environment === Hacienda_constants::ENVIRONMENT_TYPE_PROD)
@@ -184,7 +184,7 @@ class E_envoice_cr_communicator {
 		return $url;
 	}
 
-	protected function getAuthenticationClientId()
+	protected function get_authentication_client_id()
 	{
 		$environment = $this->_ci->Appconfig->get('e_envoice_cr_env');
 		if ($environment === Hacienda_constants::ENVIRONMENT_TYPE_PROD)
@@ -198,7 +198,7 @@ class E_envoice_cr_communicator {
 		return $client_id;
 	}
 
-	protected function getConnectionClient()
+	protected function get_connection_client()
 	{
 		$client = new Client([
 			'http_errors' => false,
@@ -212,7 +212,7 @@ class E_envoice_cr_communicator {
 		return $client;
 	}
 
-	protected function getDocumentPayload(&$document_info, $xml_file)
+	protected function get_document_payload(&$document_info, $xml_file)
 	{
 		$document_content = file_get_contents($xml_file);
 
@@ -238,7 +238,7 @@ class E_envoice_cr_communicator {
 		return $data;
 	}
 
-	protected function getAPIUrl()
+	protected function get_api_url()
 	{
 		$environment = $this->_ci->Appconfig->get('e_envoice_cr_env');
 		if ($environment === Hacienda_constants::ENVIRONMENT_TYPE_PROD)
