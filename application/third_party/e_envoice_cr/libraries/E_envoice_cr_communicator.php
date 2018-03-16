@@ -145,6 +145,31 @@ class E_envoice_cr_communicator {
 		return $this->_auth_token;
 	}
 
+	protected function logout()
+	{
+		$url = $this->getAuthenticationURL();
+		$url .= '/logout';
+		$client = $this->getConnectionClient();
+		$client_id = $this->getAuthenticationClientId();
+		try
+		{
+			$request = $client->request('POST', $url, array(
+				'form_params' => array(
+					'client_id' => $client_id,
+					'refresh_token' => $this->_refresh_token,
+				)
+			));
+			$code = $request->getStatusCode();
+		}
+		catch (GuzzleHttp\Exception\RequestException $e_req)
+		{
+
+		}
+
+		$this->_auth_token = '';
+		$this->_refresh_token = '';
+	}
+
 	protected function getAuthenticationURL()
 	{
 		$environment = $this->_ci->Appconfig->get('e_envoice_cr_env');
