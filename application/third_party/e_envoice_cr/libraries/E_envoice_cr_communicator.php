@@ -8,6 +8,7 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Description of E_envoice_cr_communicator
@@ -22,6 +23,7 @@ class E_envoice_cr_communicator {
 	private $_document_url;
 	private $_auth_token;
 	private $_refresh_token;
+	private $_response_xml;
 
 	public function __construct()
 	{
@@ -33,6 +35,7 @@ class E_envoice_cr_communicator {
 		$this->_document_status = '';
 		$this->_auth_token = '';
 		$this->_refresh_token = '';
+		$this->_response_xml;
 	}
 
 	public function get_url_document()
@@ -50,6 +53,11 @@ class E_envoice_cr_communicator {
 		return $this->_document_status;
 	}
 
+	public function get_response_xml()
+	{
+		return $this->_response_xml;
+	}
+
 	public function send_document(&$document_info, $xml_file)
 	{
 		$this->login();
@@ -63,12 +71,31 @@ class E_envoice_cr_communicator {
 			]);
 			$this->process_send_document_response($response);
 		}
-		catch (GuzzleHttp\Exception\RequestException $e_req)
+		catch (RequestException $e_req)
 		{
 			$this->_message = $e_req->getMessage();
 			$this->_document_status = 'Pendiente';
 			$this->_document_url = '';
 		}
+		$this->logout();
+	}
+
+	public function check_document($document_url)
+	{
+		$this->login();
+		$client = $this->get_connection_client();
+		try
+		{
+			$request = $client->get($document_url);
+			$this->process_check_document_response($request);
+		}
+		catch (RequestException $e_req)
+		{
+			$this->_message = $e_req->getMessage();
+			$this->_document_status = '';
+			$this->_response_xml = '';
+		}
+
 		$this->logout();
 	}
 
@@ -96,6 +123,35 @@ class E_envoice_cr_communicator {
 				$this->_document_url = '';
 				break;
 			default :
+				break;
+		}
+	}
+
+	protected function process_check_document_response(&$request)
+	{
+		$code = $request->getStatusCode();
+		switch ($code) {
+			case 200:
+				$response = json_decode($request->getBody(), true);
+				$this->_document_status = $response['ind-estado'];
+				if (array_key_exists('respuesta-xml', $response) && !empty($response['respuesta-xml']))
+				{
+					$message_base64 = $response['respuesta-xml'];
+					$this->_response_xml = base64_decode($message_base64);
+				}
+				else
+				{
+					$this->_response_xml = '';
+				}
+				break;
+			case 404:
+				$message = $request->getHeader('X-Error-Cause');
+				$this->_message = implode('. ', $message);
+				$this->_document_status = 'No encontrado';
+				$this->_response_xml = '';
+				break;
+			default :
+				$this->_response_xml = '';
 				break;
 		}
 	}
@@ -136,7 +192,7 @@ class E_envoice_cr_communicator {
 				$this->_auth_token = $tokens->access_token;
 				$this->_refresh_token = $tokens->refresh_token;
 			}
-			catch (GuzzleHttp\Exception\RequestException $exc)
+			catch (RequestException $exc)
 			{
 				$this->_auth_token = '';
 				$this->_refresh_token = '';
@@ -161,7 +217,7 @@ class E_envoice_cr_communicator {
 			));
 			$code = $request->getStatusCode();
 		}
-		catch (GuzzleHttp\Exception\RequestException $e_req)
+		catch (RequestException $e_req)
 		{
 
 		}
