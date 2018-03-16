@@ -21,6 +21,7 @@ class E_envoice_cr_communicator {
 	private $_document_status;
 	private $_document_url;
 	private $_auth_token;
+	private $_refresh_token;
 
 	public function __construct()
 	{
@@ -31,6 +32,7 @@ class E_envoice_cr_communicator {
 		$this->_message = '';
 		$this->_document_status = '';
 		$this->_auth_token = '';
+		$this->_refresh_token = '';
 	}
 
 	public function getURLDocument()
@@ -67,6 +69,7 @@ class E_envoice_cr_communicator {
 			$this->_document_status = 'Pendiente';
 			$this->_document_url = '';
 		}
+		$this->logout();
 	}
 
 	protected function processSendDocumentResponse(&$response)
@@ -108,24 +111,36 @@ class E_envoice_cr_communicator {
 		$url .= '/token';
 		$client_id = $this->getAuthenticationClientId();
 
-		if ($username !== "" && $password !== "")
-		{
-			$options = $this->getAuthenticationOptions($username, $password, $client_id);
-			$context = stream_context_create($options);
-			$result = file_get_contents($url, FALSE, $context);
-			if ($result === FALSE)
-			{
-				echo $result;
-			}
+		$client = new Client(array(
+			'http_errors' => false,
+			'connect_timeout' => 5,
+			'timeout' => 15,)
+		);
 
-			// Get a token object.
-			$token = json_decode($result);
-			// Return a json object whith token and refresh token.
-			$this->_auth_token = $token->access_token;
-		}
-		else
+		if (!empty($username) && !empty($password))
 		{
-			$this->_auth_token = "";
+			try
+			{
+				$request = $client->request('POST', $url, array(
+					'form_params' => array(
+						'client_id' => $client_id,
+						'client_secret' => '',
+						'grant_type' => 'password',
+						'username' => $username,
+						'password' => $password,
+						'scope' => '',
+					)
+				));
+				$response = $request->getBody();
+				$tokens = json_decode($response);
+				$this->_auth_token = $tokens->access_token;
+				$this->_refresh_token = $tokens->refresh_token;
+			}
+			catch (GuzzleHttp\Exception\RequestException $exc)
+			{
+				$this->_auth_token = '';
+				$this->_refresh_token = '';
+			}
 		}
 		return $this->_auth_token;
 	}
@@ -156,27 +171,6 @@ class E_envoice_cr_communicator {
 			$client_id = Hacienda_constants::AUTH_CLIENT_STAG;
 		}
 		return $client_id;
-	}
-
-	protected function getAuthenticationOptions(&$username, &$password, &$client_id)
-	{
-		$data = [
-			'client_id' => $client_id,
-			'client_secret' => '',
-			'grant_type' => 'password',
-			'username' => $username,
-			'password' => $password,
-			'scope' => '',
-		];
-		// Use key 'http' even if you send the request to https://.
-		$options = [
-			'http' => [
-				'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-				'method' => 'POST',
-				'content' => http_build_query($data),
-			],
-		];
-		return $options;
 	}
 
 	protected function getConnectionClient()
