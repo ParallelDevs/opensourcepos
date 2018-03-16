@@ -630,7 +630,7 @@ class Sales extends Secure_Controller {
 				$data['sale_status'] = COMPLETED;
 				$sale_type = SALE_TYPE_INVOICE;
 
-				$sale_document = $this->e_envoice_cr_lib->sendSaleDocument($data, $sale_type, $customer_id);
+				$sale_document = $this->e_envoice_cr_lib->send_sale_document($data, $sale_type, $customer_id);
 
 				if (false === $sale_document)
 				{
@@ -768,7 +768,7 @@ class Sales extends Secure_Controller {
 
 			if (SALE_TYPE_POS === $sale_type)
 			{
-				$sale_document = $this->e_envoice_cr_lib->sendSaleDocument($data, $sale_type, $customer_id);
+				$sale_document = $this->e_envoice_cr_lib->send_sale_document($data, $sale_type, $customer_id);
 				if (false === $sale_document)
 				{
 					$data['sale_id_num'] = -1;

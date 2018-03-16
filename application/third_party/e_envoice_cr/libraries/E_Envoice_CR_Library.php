@@ -33,13 +33,13 @@ class E_Envoice_CR_Library {
 		}
 	}
 
-	public function sendSaleDocument(&$sale_data, $sale_type, $client_id)
+	public function send_sale_document(&$sale_data, $sale_type, $client_id)
 	{
 		$result = false;
-		$this->generateXmlDocument($sale_data, $sale_type, $client_id);
-		if ($this->signXmlDocument())
+		$this->generate_xml_document($sale_data, $sale_type, $client_id);
+		if ($this->sign_xml_document())
 		{
-			$result = $this->sendXmlDocument();
+			$result = $this->send_xml_document();
 		}
 		if (false !== $result)
 		{
@@ -55,7 +55,7 @@ class E_Envoice_CR_Library {
 		$print_info = $this->_ci->e_envoice_cr_document_loader->get_print_data($sale_id);
 		if (false !== $print_info)
 		{
-			$this->getEmitterPrintInformation($print_info);
+			$this->get_emitter_print_information($print_info);
 			$print_info['document_version'] = $this->_ci->Appconfig->get('e_envoice_cr_document_version');
 			$print_info['document_legend'] = $this->_ci->Appconfig->get('e_envoice_cr_document_legend');
 			$print_info['lang_document_sale_type'] = (true == $sale_data['payments_cover_total']) ?
@@ -94,7 +94,7 @@ class E_Envoice_CR_Library {
 		return $details;
 	}
 
-	protected function generateXmlDocument(&$sale_data, &$sale_type, &$client_id)
+	protected function generate_xml_document(&$sale_data, &$sale_type, &$client_id)
 	{
 		$this->_ci->load->library('e_envoice_cr_mapper');
 		$this->_ci->e_envoice_cr_mapper->mapSale($sale_data, $sale_type, $client_id);
@@ -108,15 +108,15 @@ class E_Envoice_CR_Library {
 		$class = 'E_envoice_cr_' . $type . '_generator';
 		require_once APPPATH . 'third_party/e_envoice_cr/libraries/' . $class . '.php';
 		$this->_xml_generator = new $class($document_key);
-		$this->_xml_generator->generateXMLDocument($general_data, $client, $emitter, $rows);
+		$this->_xml_generator->generate_xml_document($general_data, $client, $emitter, $rows);
 	}
 
-	protected function signXmlDocument()
+	protected function sign_xml_document()
 	{
 		$xml_document = $this->_xml_generator->getFile();
 		$xml_path = $this->_xml_generator->getPath();
 		$this->_ci->load->library('e_envoice_cr_document_signer');
-		$signed = $this->_ci->e_envoice_cr_document_signer->signXMLDocument($xml_path, $xml_document);
+		$signed = $this->_ci->e_envoice_cr_document_signer->sign_xml_document($xml_path, $xml_document);
 		$signed_document = $this->_ci->e_envoice_cr_document_signer->getSignedXMLDocument();
 		if ($signed)
 		{
@@ -126,11 +126,11 @@ class E_Envoice_CR_Library {
 		return false;
 	}
 
-	protected function sendXmlDocument()
+	protected function send_xml_document()
 	{
 		$xml_path = $this->_xml_generator->getPath();
 		$signed_document = $this->_xml_generator->getFile();
-		$document_info = $this->getSaleDocumentPayload();
+		$document_info = $this->get_sale_document_payload();
 		$this->_ci->load->library('e_envoice_cr_communicator');
 		$this->_ci->e_envoice_cr_communicator->send_document($document_info, $xml_path . $signed_document);
 		$doc_type = $this->_ci->e_envoice_cr_mapper->getDocumentType();
@@ -146,7 +146,7 @@ class E_Envoice_CR_Library {
 		return $sale_document_info;
 	}
 
-	protected function getSaleDocumentPayload()
+	protected function get_sale_document_payload()
 	{
 		$general_data = $this->_ci->e_envoice_cr_mapper->getDocumentData();
 		$emitter = $this->_ci->e_envoice_cr_mapper->getEmitterData();
@@ -170,7 +170,7 @@ class E_Envoice_CR_Library {
 		return $document_info;
 	}
 
-	protected function getEmitterPrintInformation(&$print_info)
+	protected function get_emitter_print_information(&$print_info)
 	{
 		$this->_ci->load->model(array(
 			'eenvoicecrprovince',
